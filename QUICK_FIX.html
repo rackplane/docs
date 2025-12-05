@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚨 QUICK FIX: Database "dcms" Does Not Exist - RackPlane Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">RackPlane</h1>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search documentation...">
+                <div id="searchResults" class="search-results"></div>
+            </div>
+            <nav class="nav-menu" id="navMenu">
+                <div class="nav-category">Getting Started</div>
+<ul class="nav-items">
+<li><a href="README.html" class="">RackPlane Documentation</a></li>
+</ul>
+<div class="nav-category">Setup & Installation</div>
+<ul class="nav-items">
+<li><a href="DEPLOYMENT.html" class="">Deployment Guide</a></li>
+<li><a href="NETBOX_SETUP.html" class="">NetBox Integration Setup Guide</a></li>
+<li><a href="LABEL_PRINTING.html" class="">Label Printing Guide</a></li>
+<li><a href="QUICK_FIX.html" class="active">🚨 QUICK FIX: Database "dcms" Does Not Exist</a></li>
+</ul>
+<div class="nav-category">User Guides</div>
+<ul class="nav-items">
+<li><a href="STOCK_MANAGEMENT_GUIDE.html" class="">Stock Management Guide</a></li>
+<li><a href="TENANT_ONBOARDING.html" class="">Tenant Onboarding Documentation</a></li>
+</ul>
+<div class="nav-category">Backup & Recovery</div>
+<ul class="nav-items">
+<li><a href="BACKUP_GUIDE.html" class="">Database Backup & Restore Guide</a></li>
+<li><a href="CROSS_SERVER_BACKUP.html" class="">Cross-Server Backup & Restore Guide</a></li>
+<li><a href="EMERGENCY_RECOVERY.html" class="">🚨 EMERGENCY DATABASE RECOVERY GUIDE</a></li>
+</ul>
+<div class="nav-category">API Reference</div>
+<ul class="nav-items">
+<li><a href="API_DOCUMENTATION.html" class="">API Documentation</a></li>
+</ul>
+            </nav>
+        </aside>
+        <main class="content">
+            <article class="doc-content">
+                <h1>🚨 QUICK FIX: Database "dcms" Does Not Exist</h1>
+
+<h2>Problem</h2>
+<p>Your application can't connect because the PostgreSQL database "dcms" was never created or was deleted.</p>
+
+<h2>Solution (30 seconds)</h2>
+
+<p>Run this one command:</p>
+<pre><code class="language-bash">./create_database.sh
+</code></pre>
+
+<p>This script will:</p>
+<ol>
+<li>✅ Create the "dcms" database</li>
+<li>✅ Restart the backend to initialize tables</li>
+<li>✅ Verify everything is working</li>
+</ol>
+
+<h2>Manual Steps (if script doesn't work)</h2>
+
+<pre><code class="language-bash"># 1. Create the database
+docker-compose exec db psql -U postgres -c "CREATE DATABASE dcms;"
+
+# 2. Restart backend to create tables
+docker-compose restart backend
+
+# 3. Wait a few seconds
+sleep 5
+
+# 4. Verify tables were created
+docker-compose exec db psql -U postgres -d dcms -c "\dt"
+</code></pre>
+
+<h2>After Database is Created</h2>
+
+<h3>Restore from NetBox:</h3>
+<pre><code class="language-bash"># Option 1: Use the Web UI
+# Go to http://localhost:3000/netbox
+# Click "Full Sync from NetBox"
+
+# Option 2: Use the API
+curl -X POST http://localhost:8000/api/v1/netbox/sync/pull
+</code></pre>
+
+<h3>Or restore from backup (if you have one):</h3>
+<pre><code class="language-bash">curl -o backup.json http://localhost:8000/api/v1/backup/export
+docker-compose exec backend python backup_cli.py import backup.json
+</code></pre>
+
+<h2>Prevent This in the Future</h2>
+
+<p>The database should be automatically created by docker-compose. Check your <code>docker-compose.yml</code>:</p>
+
+<pre><code class="language-yaml">services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: dcms        # ← This creates the database
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+</code></pre>
+
+<p>If <code>POSTGRES_DB: dcms</code> is missing, add it and run:</p>
+<pre><code class="language-bash">docker-compose down -v  # WARNING: Deletes all data
+docker-compose up -d    # Recreates with new database
+</code></pre>
+
+            </article>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

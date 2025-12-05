@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetBox Integration Setup Guide - RackPlane Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">RackPlane</h1>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search documentation...">
+                <div id="searchResults" class="search-results"></div>
+            </div>
+            <nav class="nav-menu" id="navMenu">
+                <div class="nav-category">Getting Started</div>
+<ul class="nav-items">
+<li><a href="README.html" class="">RackPlane Documentation</a></li>
+</ul>
+<div class="nav-category">Setup & Installation</div>
+<ul class="nav-items">
+<li><a href="DEPLOYMENT.html" class="">Deployment Guide</a></li>
+<li><a href="NETBOX_SETUP.html" class="active">NetBox Integration Setup Guide</a></li>
+<li><a href="LABEL_PRINTING.html" class="">Label Printing Guide</a></li>
+<li><a href="QUICK_FIX.html" class="">🚨 QUICK FIX: Database "dcms" Does Not Exist</a></li>
+</ul>
+<div class="nav-category">User Guides</div>
+<ul class="nav-items">
+<li><a href="STOCK_MANAGEMENT_GUIDE.html" class="">Stock Management Guide</a></li>
+<li><a href="TENANT_ONBOARDING.html" class="">Tenant Onboarding Documentation</a></li>
+</ul>
+<div class="nav-category">Backup & Recovery</div>
+<ul class="nav-items">
+<li><a href="BACKUP_GUIDE.html" class="">Database Backup & Restore Guide</a></li>
+<li><a href="CROSS_SERVER_BACKUP.html" class="">Cross-Server Backup & Restore Guide</a></li>
+<li><a href="EMERGENCY_RECOVERY.html" class="">🚨 EMERGENCY DATABASE RECOVERY GUIDE</a></li>
+</ul>
+<div class="nav-category">API Reference</div>
+<ul class="nav-items">
+<li><a href="API_DOCUMENTATION.html" class="">API Documentation</a></li>
+</ul>
+            </nav>
+        </aside>
+        <main class="content">
+            <article class="doc-content">
+                <h1>NetBox Integration Setup Guide</h1>
+
+<h2>Configuration Steps</h2>
+
+<h3>1. Get Your NetBox API Token</h3>
+
+<p>First, you need to obtain an API token from your NetBox instance:</p>
+
+<ol>
+<li>Log in to your NetBox web interface</li>
+<li>Go to your user profile (top right corner → Profile)</li>
+<li>Navigate to "API Tokens" section</li>
+<li>Click "Add a token" or "Create Token"</li>
+<li>Give it a name (e.g., "DCMS Integration")</li>
+<li>Copy the generated token</li>
+</ol>
+
+<h3>2. Configure Environment Variables</h3>
+
+<h4>Option A: Using Docker (Recommended)</h4>
+
+<p>Edit the <code>.env</code> file in the project root (<code>/home/user/dcms/.env</code>):</p>
+
+<pre><code class="language-bash"># Replace with your actual values
+NETBOX_URL=https://netbox.yourcompany.com
+NETBOX_TOKEN=abc123def456your-actual-token-here
+</code></pre>
+
+<p><strong>Note:</strong></p>
+<ul>
+<li>The URL should NOT have a trailing slash</li>
+<li>The URL should include the protocol (https:// or http://)</li>
+<li>Example: <code>https://netbox.example.com</code> or <code>http://192.168.1.100:8080</code></li>
+</ul>
+
+<h4>Option B: Running Backend Directly (Without Docker)</h4>
+
+<p>Edit the <code>.env</code> file in the backend directory (<code>/home/user/dcms/backend/.env</code>):</p>
+
+<pre><code class="language-bash"># Replace with your actual values
+NETBOX_URL=https://netbox.yourcompany.com
+NETBOX_TOKEN=abc123def456your-actual-token-here
+</code></pre>
+
+<h3>3. Restart Your Services</h3>
+
+<h4>If using Docker:</h4>
+
+<pre><code class="language-bash">cd /home/user/dcms
+docker-compose down
+docker-compose up -d backend
+</code></pre>
+
+<h4>If running backend directly:</h4>
+
+<p>Stop the backend process (Ctrl+C) and restart it:</p>
+
+<pre><code class="language-bash">cd /home/user/dcms/backend
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+</code></pre>
+
+<h3>4. Verify Configuration</h3>
+
+<p>After restarting, navigate to the NetBox page in the UI:</p>
+
+<pre><code>http://localhost:3000/netbox
+</code></pre>
+
+<p>Click the "Test Connection" button. You should see:</p>
+<ul>
+<li>✓ Green status if connected successfully</li>
+<li>The NetBox version number</li>
+<li>Your NetBox URL</li>
+</ul>
+
+<h3>5. Run Database Migration (if needed)</h3>
+
+<p>If you have an existing database, run this migration to add NetBox ID fields:</p>
+
+<pre><code class="language-bash">cd /home/user/dcms/backend
+python add_netbox_id_columns.py
+</code></pre>
+
+<h2>Troubleshooting</h2>
+
+<h3>Issue: "NetBox URL or token not configured"</h3>
+
+<p><strong>Solution:</strong> Make sure you've edited the <code>.env</code> file with your actual values and restarted the service.</p>
+
+<h3>Issue: "Connection failed: Unable to connect"</h3>
+
+<p><strong>Possible causes:</strong></p>
+<ol>
+<li><strong>Wrong URL format</strong> - Make sure URL doesn't have trailing slash</li>
+<li><strong>Network issue</strong> - Can you access NetBox from your browser?</li>
+<li><strong>SSL certificate issue</strong> - If using self-signed certs, you may need additional configuration</li>
+<li><strong>Firewall</strong> - Ensure the backend container/process can reach NetBox</li>
+</ol>
+
+<p><strong>Test from backend container:</strong></p>
+<pre><code class="language-bash"># If using Docker
+docker exec -it rackplane_backend curl -H "Authorization: Token YOUR_TOKEN" https://your-netbox-url/api/
+
+# If running directly
+curl -H "Authorization: Token YOUR_TOKEN" https://your-netbox-url/api/
+</code></pre>
+
+<h3>Issue: "Unauthorized" or "Invalid token"</h3>
+
+<p><strong>Solution:</strong></p>
+<ol>
+<li>Verify your token is correct (copy-paste it again)</li>
+<li>Check that the token is active in NetBox</li>
+<li>Ensure the token has read permissions</li>
+</ol>
+
+<h3>Issue: Environment variables not being read</h3>
+
+<p><strong>For Docker:</strong></p>
+<ol>
+<li>Make sure the <code>.env</code> file is in the same directory as <code>docker-compose.yml</code></li>
+<li>Restart with: <code>docker-compose down && docker-compose up -d</code></li>
+<li>Check if variables are set: <code>docker exec rackplane_backend env | grep NETBOX</code></li>
+</ol>
+
+<p><strong>For direct backend:</strong></p>
+<ol>
+<li>Make sure the <code>.env</code> file is in the <code>backend/</code> directory</li>
+<li>Restart the uvicorn process</li>
+<li>Check in Python:</li>
+</ol>
+   <pre><code class="language-bash">   cd backend
+   python -c "from app.core.config import settings; print(f'URL: {settings.NETBOX_URL}'); print(f'Token: {settings.NETBOX_TOKEN[:10]}...')"
+   </code></pre>
+
+<h2>Example Configuration</h2>
+
+<p>Here's a complete example of what your <code>.env</code> should look like:</p>
+
+<pre><code class="language-bash"># For a cloud-hosted NetBox
+NETBOX_URL=https://netbox.example.com
+NETBOX_TOKEN=0123456789abcdef0123456789abcdef01234567
+
+# For a local NetBox instance
+NETBOX_URL=http://192.168.1.100:8000
+NETBOX_TOKEN=0123456789abcdef0123456789abcdef01234567
+
+# For NetBox running in Docker on same machine
+NETBOX_URL=http://netbox:8080
+NETBOX_TOKEN=0123456789abcdef0123456789abcdef01234567
+</code></pre>
+
+<h2>Next Steps</h2>
+
+<p>Once connected successfully:</p>
+
+<ol>
+<li><strong>Import Racks</strong> - Click "Import Racks" to pull rack definitions from NetBox</li>
+<li><strong>Import Devices</strong> - Click "Import Devices" to pull device inventory</li>
+<li><strong>Full Sync</strong> - Use "Full Sync" to import everything at once</li>
+</ol>
+
+<p>The system will automatically:</p>
+<ul>
+<li>Create datacenters from NetBox sites</li>
+<li>Create racks with proper dimensions</li>
+<li>Create assets from devices</li>
+<li>Map device roles to asset types</li>
+<li>Maintain NetBox ID links for future syncs</li>
+</ul>
+
+            </article>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

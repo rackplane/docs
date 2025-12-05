@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenant Onboarding Documentation - RackPlane Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">RackPlane</h1>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search documentation...">
+                <div id="searchResults" class="search-results"></div>
+            </div>
+            <nav class="nav-menu" id="navMenu">
+                <div class="nav-category">Getting Started</div>
+<ul class="nav-items">
+<li><a href="README.html" class="">RackPlane Documentation</a></li>
+</ul>
+<div class="nav-category">Setup & Installation</div>
+<ul class="nav-items">
+<li><a href="DEPLOYMENT.html" class="">Deployment Guide</a></li>
+<li><a href="NETBOX_SETUP.html" class="">NetBox Integration Setup Guide</a></li>
+<li><a href="LABEL_PRINTING.html" class="">Label Printing Guide</a></li>
+<li><a href="QUICK_FIX.html" class="">🚨 QUICK FIX: Database "dcms" Does Not Exist</a></li>
+</ul>
+<div class="nav-category">User Guides</div>
+<ul class="nav-items">
+<li><a href="STOCK_MANAGEMENT_GUIDE.html" class="">Stock Management Guide</a></li>
+<li><a href="TENANT_ONBOARDING.html" class="active">Tenant Onboarding Documentation</a></li>
+</ul>
+<div class="nav-category">Backup & Recovery</div>
+<ul class="nav-items">
+<li><a href="BACKUP_GUIDE.html" class="">Database Backup & Restore Guide</a></li>
+<li><a href="CROSS_SERVER_BACKUP.html" class="">Cross-Server Backup & Restore Guide</a></li>
+<li><a href="EMERGENCY_RECOVERY.html" class="">🚨 EMERGENCY DATABASE RECOVERY GUIDE</a></li>
+</ul>
+<div class="nav-category">API Reference</div>
+<ul class="nav-items">
+<li><a href="API_DOCUMENTATION.html" class="">API Documentation</a></li>
+</ul>
+            </nav>
+        </aside>
+        <main class="content">
+            <article class="doc-content">
+                <h1>Tenant Onboarding Documentation</h1>
+
+<h2>Overview</h2>
+
+<p>The Tenant Onboarding endpoint is a <strong>public endpoint</strong> (no authentication required) that allows new organizations to sign up and create their tenant account. This is the bridge between "Signing Up" and "Using the App" in the multi-tenant SaaS architecture.</p>
+
+<h2>Endpoint</h2>
+
+<p><strong>POST</strong> <code>/api/v1/tenants/onboard</code></p>
+
+<p><strong>Authentication:</strong> None (Public endpoint)</p>
+
+<h2>Request Schema</h2>
+
+<pre><code class="language-json">{
+  "company_name": "string (required, 1-200 chars)",
+  "company_slug": "string (optional, auto-generated from company_name)",
+  "contact_email": "string (optional, email format)",
+  "contact_phone": "string (optional, max 50 chars)",
+  "admin_username": "string (required, 3-100 chars)",
+  "admin_password": "string (required, 6-100 chars)",
+  "admin_email": "string (optional, email format)",
+  "subscription_tier": "string (optional, default: 'standard')"
+}
+</code></pre>
+
+<h3>Field Descriptions</h3>
+
+<ul>
+<li><strong>company_name</strong> (required): The name of the organization/company</li>
+<li><strong>company<em>slug</strong> (optional): URL-friendly identifier. If not provided, it will be auto-generated from <code>company</em>name</code> by:</li>
+</ul>
+<p>- Converting to lowercase - Replacing spaces with hyphens - Removing special characters - If empty after processing, a timestamp-based slug is generated</p>
+<ul>
+<li><strong>contact_email</strong> (optional): Primary contact email for the tenant</li>
+<li><strong>contact_phone</strong> (optional): Primary contact phone number</li>
+<li><strong>admin_username</strong> (required): Username for the first admin user (must be globally unique)</li>
+<li><strong>admin_password</strong> (required): Password for the first admin user (minimum 6 characters)</li>
+<li><strong>admin_email</strong> (optional): Email address for the first admin user</li>
+<li><strong>subscription_tier</strong> (optional): Subscription tier (<code>standard</code>, <code>premium</code>, <code>enterprise</code>). Defaults to <code>standard</code></li>
+</ul>
+
+<h2>Response Schema</h2>
+
+<pre><code class="language-json">{
+  "tenant_id": 1,
+  "tenant_name": "Acme Corporation",
+  "tenant_slug": "acme-corporation",
+  "user_id": 5,
+  "username": "admin",
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer",
+  "message": "Tenant 'Acme Corporation' and admin user 'admin' created successfully. Default asset types have been seeded."
+}
+</code></pre>
+
+<h2>Onboarding Flow</h2>
+
+<p>When a new tenant signs up, the endpoint performs the following steps:</p>
+
+<ol>
+<li><strong>Validation</strong></li>
+</ol>
+<p>- Checks if the tenant slug already exists - Checks if the admin username already exists globally - Validates email formats (if provided)</p>
+
+<ol>
+<li><strong>Tenant Creation</strong></li>
+</ol>
+<p>- Creates a new tenant record in the database - Sets <code>is_active = true</code> - Sets the subscription tier</p>
+
+<ol>
+<li><strong>First Admin User Creation</strong></li>
+</ol>
+<p>- Creates the first user account for the tenant - Sets <code>is<em>active = true</code> - Sets <code>is</em>super_admin = false</code> (first user is a regular admin, not a system super admin) - Hashes the password using bcrypt</p>
+
+<ol>
+<li><strong>Asset Type Seeding</strong></li>
+</ol>
+<p>- Automatically seeds 21 default asset types for the new tenant: - Server, Network Switch, Router, Storage, Firewall - Load Balancer, PDU, UPS, Patch Panel, KVM Switch - Console Server, Cable types (Generic, DAC, Ethernet, Electrical, Fiber) - Transceivers (Copper, Optical), NIC Card, DPU Card, Other - All asset types are marked as <code>is_system = true</code></p>
+
+<ol>
+<li><strong>JWT Token Generation</strong></li>
+</ol>
+<p>- Generates a JWT access token for the new admin user - Token includes: - <code>sub</code>: Username - <code>tenant<em>id</code>: The newly created tenant ID - <code>is</em>super_admin</code>: false - Token expires in 24 hours</p>
+
+<ol>
+<li><strong>Response</strong></li>
+</ol>
+<p>- Returns tenant information, user information, and the access token - The client can immediately use the token to authenticate subsequent requests</p>
+
+<h2>Technical Implementation</h2>
+
+<h3>Bypassing Tenant Filtering</h3>
+
+<p>This endpoint is special because it <strong>bypasses the automatic tenant filtering</strong> that normally applies to all database queries. This is necessary because:</p>
+
+<ul>
+<li>The tenant doesn't exist yet when we're creating it</li>
+<li>We need to check for duplicate slugs/usernames globally (not tenant-scoped)</li>
+<li>We need to create records without tenant context</li>
+</ul>
+
+<p>The implementation uses:</p>
+<ul>
+<li><strong>Raw SQL queries</strong> (<code>text()</code>) to bypass SQLAlchemy's automatic tenant filtering</li>
+<li><strong>Context clearing</strong> (<code>clear<em>tenant</em>id()</code>) to ensure no tenant context is set</li>
+<li><strong>Direct database inserts</strong> for tenant, user, and asset type creation</li>
+</ul>
+
+<h3>Public Endpoint Configuration</h3>
+
+<p>The endpoint is configured as a public endpoint in <code>TenantMiddleware</code>:</p>
+
+<pre><code class="language-python">public_paths = [
+    "/api/v1/tenants/onboard",  # Tenant onboarding endpoint (public)
+    # ... other public paths
+]
+</code></pre>
+
+<p>This ensures that:</p>
+<ul>
+<li>No authentication is required</li>
+<li>No tenant context is extracted from JWT tokens</li>
+<li>The endpoint is accessible for signup flows</li>
+</ul>
+
+<h2>Example Usage</h2>
+
+<h3>cURL</h3>
+
+<pre><code class="language-bash">curl -X POST http://localhost:8000/api/v1/tenants/onboard \
+  -H "Content-Type: application/json" \
+  -d '{
+    "company_name": "Acme Corporation",
+    "admin_username": "admin",
+    "admin_password": "SecurePass123!",
+    "contact_email": "admin@acme.com",
+    "subscription_tier": "standard"
+  }'
+</code></pre>
+
+<h3>Python</h3>
+
+<pre><code class="language-python">import requests
+
+response = requests.post(
+    "http://localhost:8000/api/v1/tenants/onboard",
+    json={
+        "company_name": "Acme Corporation",
+        "admin_username": "admin",
+        "admin_password": "SecurePass123!",
+        "contact_email": "admin@acme.com",
+        "subscription_tier": "standard"
+    }
+)
+
+data = response.json()
+print(f"Tenant ID: {data['tenant_id']}")
+print(f"Access Token: {data['access_token']}")
+
+# Use the token for subsequent requests
+headers = {"Authorization": f"Bearer {data['access_token']}"}
+</code></pre>
+
+<h3>JavaScript/TypeScript</h3>
+
+<pre><code class="language-typescript">const response = await fetch('http://localhost:8000/api/v1/tenants/onboard', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    company_name: 'Acme Corporation',
+    admin_username: 'admin',
+    admin_password: 'SecurePass123!',
+    contact_email: 'admin@acme.com',
+    subscription_tier: 'standard'
+  })
+});
+
+const data = await response.json();
+console.log('Tenant ID:', data.tenant_id);
+console.log('Access Token:', data.access_token);
+
+// Store token for subsequent requests
+localStorage.setItem('auth_token', data.access_token);
+</code></pre>
+
+<h2>Error Responses</h2>
+
+<h3>400 Bad Request</h3>
+
+<p><strong>Tenant slug already exists:</strong></p>
+<pre><code class="language-json">{
+  "detail": "Tenant with slug 'acme-corporation' already exists. Please choose a different company name or slug."
+}
+</code></pre>
+
+<p><strong>Username already exists:</strong></p>
+<pre><code class="language-json">{
+  "detail": "Username 'admin' already exists. Please choose a different username."
+}
+</code></pre>
+
+<p><strong>Validation errors:</strong></p>
+<pre><code class="language-json">{
+  "detail": [
+    {
+      "loc": ["body", "admin_password"],
+      "msg": "ensure this value has at least 6 characters",
+      "type": "value_error.any_str.min_length"
+    }
+  ]
+}
+</code></pre>
+
+<h3>500 Internal Server Error</h3>
+
+<pre><code class="language-json">{
+  "detail": "Failed to create tenant: &lt;error message&gt;"
+}
+</code></pre>
+
+<h2>Security Considerations</h2>
+
+<ol>
+<li><strong>Rate Limiting</strong>: Consider implementing rate limiting on this endpoint to prevent abuse</li>
+<li><strong>Email Verification</strong>: The endpoint accepts email addresses but doesn't verify them. Consider adding email verification in a future update</li>
+<li><strong>Password Strength</strong>: The endpoint only enforces minimum length (6 characters). Consider adding password strength requirements</li>
+<li><strong>Slug Collision</strong>: Auto-generated slugs use timestamps as fallback, but collisions are still possible. The endpoint checks for duplicates before creation</li>
+<li><strong>Super Admin</strong>: The first user is <strong>not</strong> a super admin. Only the system bootstrap creates super admin users</li>
+</ol>
+
+<h2>Integration with Frontend</h2>
+
+<p>The onboarding endpoint should be integrated into a signup/signup flow:</p>
+
+<ol>
+<li><strong>Signup Form</strong>: Collect company name, admin username, password, and optional contact information</li>
+<li><strong>API Call</strong>: Submit the form data to <code>/api/v1/tenants/onboard</code></li>
+<li><strong>Token Storage</strong>: Store the returned <code>access_token</code> in localStorage or session storage</li>
+<li><strong>Redirect</strong>: Redirect the user to the main application dashboard</li>
+<li><strong>Authentication</strong>: Use the stored token for all subsequent API requests</li>
+</ol>
+
+<h2>Testing</h2>
+
+<p>The endpoint can be tested using the automated test suite or manually:</p>
+
+<pre><code class="language-bash"># Test with unique values
+curl -X POST http://localhost:8000/api/v1/tenants/onboard \
+  -H "Content-Type: application/json" \
+  -d "{\"company_name\": \"Test Company $(date +%s)\", \"admin_username\": \"test-$(date +%s)\", \"admin_password\": \"testpass123\"}"
+</code></pre>
+
+<h2>Related Endpoints</h2>
+
+<ul>
+<li><strong>POST</strong> <code>/api/v1/auth/login</code> - Login with existing credentials</li>
+<li><strong>GET</strong> <code>/api/v1/auth/check</code> - Check authentication status</li>
+<li><strong>POST</strong> <code>/api/v1/tenants/{tenant_id}/users</code> - Create additional users (requires super admin)</li>
+</ul>
+
+<hr>
+
+<p><strong>Last Updated:</strong> 2025-11-21 <strong>Version:</strong> 2.0 (Multi-Tenant SaaS) <strong>Endpoint:</strong> <code>/api/v1/tenants/onboard</code></p>
+
+
+            </article>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

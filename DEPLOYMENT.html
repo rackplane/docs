@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment Guide - RackPlane Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">RackPlane</h1>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search documentation...">
+                <div id="searchResults" class="search-results"></div>
+            </div>
+            <nav class="nav-menu" id="navMenu">
+                <div class="nav-category">Getting Started</div>
+<ul class="nav-items">
+<li><a href="README.html" class="">RackPlane Documentation</a></li>
+</ul>
+<div class="nav-category">Setup & Installation</div>
+<ul class="nav-items">
+<li><a href="DEPLOYMENT.html" class="active">Deployment Guide</a></li>
+<li><a href="NETBOX_SETUP.html" class="">NetBox Integration Setup Guide</a></li>
+<li><a href="LABEL_PRINTING.html" class="">Label Printing Guide</a></li>
+<li><a href="QUICK_FIX.html" class="">🚨 QUICK FIX: Database "dcms" Does Not Exist</a></li>
+</ul>
+<div class="nav-category">User Guides</div>
+<ul class="nav-items">
+<li><a href="STOCK_MANAGEMENT_GUIDE.html" class="">Stock Management Guide</a></li>
+<li><a href="TENANT_ONBOARDING.html" class="">Tenant Onboarding Documentation</a></li>
+</ul>
+<div class="nav-category">Backup & Recovery</div>
+<ul class="nav-items">
+<li><a href="BACKUP_GUIDE.html" class="">Database Backup & Restore Guide</a></li>
+<li><a href="CROSS_SERVER_BACKUP.html" class="">Cross-Server Backup & Restore Guide</a></li>
+<li><a href="EMERGENCY_RECOVERY.html" class="">🚨 EMERGENCY DATABASE RECOVERY GUIDE</a></li>
+</ul>
+<div class="nav-category">API Reference</div>
+<ul class="nav-items">
+<li><a href="API_DOCUMENTATION.html" class="">API Documentation</a></li>
+</ul>
+            </nav>
+        </aside>
+        <main class="content">
+            <article class="doc-content">
+                <h1>Deployment Guide</h1>
+
+<h2>Deployment Options</h2>
+
+<h3>1. Docker Compose (Recommended for Development/Small Scale)</h3>
+
+<h4>Prerequisites</h4>
+<ul>
+<li>Docker 20.10+</li>
+<li>Docker Compose 2.0+</li>
+<li>4GB RAM minimum</li>
+<li>20GB disk space</li>
+</ul>
+
+<h4>Steps</h4>
+
+<ol>
+<li><strong>Clone and configure</strong></li>
+</ol>
+<pre><code class="language-bash">git clone &lt;repository-url&gt;
+cd dcms
+cp env.example .env
+</code></pre>
+
+<ol>
+<li><strong>Edit configuration</strong></li>
+</ol>
+<pre><code class="language-bash">nano .env
+# CRITICAL: Update these security settings:
+#   - SECRET_KEY: Generate a secure random key (openssl rand -hex 32)
+#   - CORS_ORIGINS: Configure for your setup (see below)
+#   - DATABASE_URL: Update with secure password
+#   - NETBOX credentials: If using NetBox integration
+#
+# CORS Configuration:
+#   - Development: ["http://localhost:3000", "http://127.0.0.1:3000"]
+#   - With reverse proxy: Add your proxy origin (e.g., "https://dcms.example.com")
+#   - Docker network: Add container hostnames if accessing from other containers
+#   - IP access: Add IP origins (e.g., "http://192.168.1.100:3000")
+</code></pre>
+
+<ol>
+<li><strong>Start services</strong></li>
+</ol>
+<pre><code class="language-bash">docker-compose up -d
+</code></pre>
+
+<ol>
+<li><strong>Initialize database</strong></li>
+</ol>
+<pre><code class="language-bash">docker-compose exec backend python -c "from app.core.database import engine, Base; Base.metadata.create_all(bind=engine)"
+</code></pre>
+
+<ol>
+<li><strong>Verify deployment</strong></li>
+</ol>
+<pre><code class="language-bash">docker-compose ps
+curl http://localhost:8000/health
+</code></pre>
+
+<h4>Service URLs</h4>
+<ul>
+<li>Frontend: http://localhost:3000</li>
+<li>Backend API: http://localhost:8000</li>
+<li>API Docs: http://localhost:8000/api/docs</li>
+<li>PostgreSQL: localhost:5432</li>
+<li>Redis: localhost:6379</li>
+<li>MinIO Console: http://localhost:9001</li>
+</ul>
+
+<h3>2. Production Deployment (Docker + External Services)</h3>
+
+<h4>Architecture</h4>
+<pre><code>[Load Balancer]
+    ├── Frontend (React) x3 replicas
+    ├── Backend (FastAPI) x3 replicas
+    └── Celery Workers x2 replicas
+
+[External Services]
+    ├── PostgreSQL (RDS/Managed)
+    ├── Redis (ElastiCache/Managed)
+    └── S3/MinIO (Object Storage)
+</code></pre>
+
+<h4>Prerequisites</h4>
+<ul>
+<li>Production PostgreSQL instance</li>
+<li>Production Redis instance</li>
+<li>S3 or MinIO for object storage</li>
+<li>SSL certificates</li>
+<li>Domain name</li>
+</ul>
+
+<h4>Configuration</h4>
+
+<p><strong>1. Database Setup</strong></p>
+<pre><code class="language-sql">CREATE DATABASE datacenter_inventory;
+CREATE USER dcms_app WITH PASSWORD 'secure_password';
+GRANT ALL PRIVILEGES ON DATABASE datacenter_inventory TO dcms_app;
+</code></pre>
+
+<p><strong>2. Environment Configuration</strong></p>
+<pre><code class="language-bash"># Production .env
+DATABASE_URL=postgresql://dcms_app:secure_password@prod-db.example.com:5432/datacenter_inventory
+REDIS_URL=redis://prod-redis.example.com:6379/0
+
+# SECURITY: Generate secure random key
+# Generate: openssl rand -hex 32
+SECRET_KEY=&lt;generate-secure-random-key&gt;
+DEBUG=False
+
+# CORS Configuration - CRITICAL for production!
+# Must include all origins that will access the API:
+#   - Frontend domain (if different from API)
+#   - Reverse proxy origin (if using nginx/traefik/etc.)
+#   - Any other allowed origins
+# Example with reverse proxy:
+CORS_ORIGINS=["https://dcms.example.com", "https://app.example.com"]
+
+# NetBox
+NETBOX_URL=https://netbox.example.com
+NETBOX_TOKEN=&lt;your-netbox-token&gt;
+</code></pre>
+
+<p><strong>3. Build and Deploy</strong></p>
+<pre><code class="language-bash"># Build production images
+docker build -t dcms-backend:latest ./backend
+docker build -t dcms-frontend:latest ./frontend
+
+# Push to registry
+docker tag dcms-backend:latest registry.example.com/dcms-backend:latest
+docker push registry.example.com/dcms-backend:latest
+
+# Deploy
+docker run -d \
+  --name dcms-backend \
+  --env-file .env.production \
+  -p 8000:8000 \
+  registry.example.com/dcms-backend:latest
+</code></pre>
+
+<h3>3. Kubernetes Deployment</h3>
+
+<h4>Prerequisites</h4>
+<ul>
+<li>Kubernetes cluster (1.24+)</li>
+<li>kubectl configured</li>
+<li>Helm 3 (optional)</li>
+</ul>
+
+<h4>Deployment Steps</h4>
+
+<p><strong>1. Create namespace</strong></p>
+<pre><code class="language-bash">kubectl create namespace dcms
+</code></pre>
+
+<p><strong>2. Create secrets</strong></p>
+<pre><code class="language-bash">kubectl create secret generic dcms-secrets \
+  --from-literal=database-url='postgresql://user:pass@host:5432/db' \
+  --from-literal=secret-key='your-secret-key' \
+  --from-literal=netbox-token='your-netbox-token' \
+  -n dcms
+</code></pre>
+
+<p><strong>3. Deploy PostgreSQL (if not using external)</strong></p>
+<pre><code class="language-bash"># Create PVC
+kubectl apply -f k8s/postgres-pvc.yaml -n dcms
+
+# Deploy PostgreSQL
+kubectl apply -f k8s/postgres-deployment.yaml -n dcms
+kubectl apply -f k8s/postgres-service.yaml -n dcms
+</code></pre>
+
+<p><strong>4. Deploy Redis</strong></p>
+<pre><code class="language-bash">kubectl apply -f k8s/redis-deployment.yaml -n dcms
+kubectl apply -f k8s/redis-service.yaml -n dcms
+</code></pre>
+
+<p><strong>5. Deploy Backend</strong></p>
+<pre><code class="language-bash">kubectl apply -f k8s/backend-deployment.yaml -n dcms
+kubectl apply -f k8s/backend-service.yaml -n dcms
+</code></pre>
+
+<p><strong>6. Deploy Frontend</strong></p>
+<pre><code class="language-bash">kubectl apply -f k8s/frontend-deployment.yaml -n dcms
+kubectl apply -f k8s/frontend-service.yaml -n dcms
+</code></pre>
+
+<p><strong>7. Configure Ingress</strong></p>
+<pre><code class="language-bash">kubectl apply -f k8s/ingress.yaml -n dcms
+</code></pre>
+
+<p><strong>8. Verify deployment</strong></p>
+<pre><code class="language-bash">kubectl get pods -n dcms
+kubectl get services -n dcms
+kubectl get ingress -n dcms
+</code></pre>
+
+<h3>4. Cloud-Specific Deployments</h3>
+
+<h4>AWS Deployment</h4>
+
+<p><strong>Services Used:</strong></p>
+<ul>
+<li>ECS/EKS for container orchestration</li>
+<li>RDS PostgreSQL</li>
+<li>ElastiCache Redis</li>
+<li>S3 for object storage</li>
+<li>ALB for load balancing</li>
+<li>Route53 for DNS</li>
+</ul>
+
+<p><strong>Architecture:</strong></p>
+<pre><code>Route53 → ALB → ECS/EKS
+              ├── Frontend Tasks
+              ├── Backend Tasks
+              └── Celery Workers
+
+External Services:
+├── RDS PostgreSQL
+├── ElastiCache Redis
+└── S3
+</code></pre>
+
+<h4>Azure Deployment</h4>
+
+<p><strong>Services Used:</strong></p>
+<ul>
+<li>AKS for Kubernetes</li>
+<li>Azure Database for PostgreSQL</li>
+<li>Azure Cache for Redis</li>
+<li>Azure Blob Storage</li>
+<li>Application Gateway</li>
+<li>Azure DNS</li>
+</ul>
+
+<h4>Google Cloud Deployment</h4>
+
+<p><strong>Services Used:</strong></p>
+<ul>
+<li>GKE for Kubernetes</li>
+<li>Cloud SQL PostgreSQL</li>
+<li>Memorystore for Redis</li>
+<li>Cloud Storage</li>
+<li>Cloud Load Balancing</li>
+<li>Cloud DNS</li>
+</ul>
+
+<h2>Security Considerations</h2>
+
+<h3>1. Network Security</h3>
+<pre><code class="language-yaml"># Firewall rules
+- Allow HTTPS (443) from internet to load balancer
+- Allow HTTP (80) redirected to HTTPS
+- Allow PostgreSQL (5432) only from backend
+- Allow Redis (6379) only from backend
+- Deny all other inbound traffic
+</code></pre>
+
+<h3>2. Application Security</h3>
+<ul>
+<li>Use strong SECRET_KEY (32+ random characters)</li>
+<li>Configure CORS_ORIGINS for your deployment (especially if using reverse proxy)</li>
+<li>Enable HTTPS/TLS for all connections</li>
+<li>Implement rate limiting</li>
+<li>Use prepared statements (SQLAlchemy handles this)</li>
+<li>Validate all user inputs</li>
+<li>Implement authentication/authorization</li>
+<li>Regular security updates</li>
+</ul>
+
+<h3>3. Database Security</h3>
+<ul>
+<li>Use strong database passwords</li>
+<li>Enable SSL for database connections</li>
+<li>Regular backups</li>
+<li>Point-in-time recovery</li>
+<li>Encryption at rest</li>
+<li>Network isolation</li>
+</ul>
+
+<h3>4. Secrets Management</h3>
+<ul>
+<li>Use environment variables</li>
+<li>Never commit secrets to git</li>
+<li>Use secrets managers (AWS Secrets Manager, HashiCorp Vault, etc.)</li>
+<li>Rotate credentials regularly</li>
+</ul>
+
+<h2>Monitoring & Logging</h2>
+
+<h3>Prometheus Metrics</h3>
+
+<p>Add prometheus metrics exporter:</p>
+<pre><code class="language-python"># In backend/requirements.txt
+prometheus-fastapi-instrumentator==6.1.0
+
+# In backend/app/main.py
+from prometheus_fastapi_instrumentator import Instrumentator
+
+Instrumentator().instrument(app).expose(app)
+</code></pre>
+
+<h3>Logging Configuration</h3>
+
+<pre><code class="language-python"># backend/app/core/logging.py
+import logging
+import sys
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler('/var/log/dcms/app.log')
+    ]
+)
+</code></pre>
+
+<h3>Health Checks</h3>
+
+<pre><code class="language-bash"># Backend health check
+curl http://localhost:8000/health
+
+# Database connectivity
+curl http://localhost:8000/health/db
+
+# Redis connectivity
+curl http://localhost:8000/health/redis
+</code></pre>
+
+<h2>Backup & Recovery</h2>
+
+<h3>Database Backup</h3>
+
+<p><strong>Automated backup script:</strong></p>
+<pre><code class="language-bash">#!/bin/bash
+# backup-db.sh
+
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+BACKUP_DIR="/backups/postgres"
+
+docker-compose exec -T db pg_dump -U dcms datacenter_inventory | \
+  gzip &gt; "$BACKUP_DIR/backup_$TIMESTAMP.sql.gz"
+
+# Retain only last 30 days
+find "$BACKUP_DIR" -name "backup_*.sql.gz" -mtime +30 -delete
+</code></pre>
+
+<p><strong>Schedule with cron:</strong></p>
+<pre><code class="language-bash">0 2 * * * /path/to/backup-db.sh
+</code></pre>
+
+<h3>Restore from Backup</h3>
+
+<pre><code class="language-bash">gunzip &lt; backup_20240101_020000.sql.gz | \
+  docker-compose exec -T db psql -U dcms datacenter_inventory
+</code></pre>
+
+<h3>File Storage Backup</h3>
+
+<pre><code class="language-bash"># Backup MinIO data
+docker-compose exec minio mc mirror \
+  local/dcms-uploads \
+  s3/backup-bucket/dcms-uploads-$(date +%Y%m%d)
+</code></pre>
+
+<h2>Scaling</h2>
+
+<h3>Horizontal Scaling</h3>
+
+<p><strong>Backend:</strong></p>
+<pre><code class="language-bash">docker-compose up -d --scale backend=3
+</code></pre>
+
+<p><strong>Celery Workers:</strong></p>
+<pre><code class="language-bash">docker-compose up -d --scale celery_worker=5
+</code></pre>
+
+<h3>Vertical Scaling</h3>
+
+<p>Update docker-compose.yml:</p>
+<pre><code class="language-yaml">services:
+  backend:
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+</code></pre>
+
+<h2>Performance Optimization</h2>
+
+<h3>Database Optimization</h3>
+
+<pre><code class="language-sql">-- Create indexes for frequently queried fields
+CREATE INDEX idx_assets_status ON assets(status);
+CREATE INDEX idx_assets_datacenter ON assets(datacenter_id);
+CREATE INDEX idx_assets_rack ON assets(rack_id);
+CREATE INDEX idx_assets_type ON assets(asset_type);
+</code></pre>
+
+<h3>Redis Caching</h3>
+
+<p>Implement caching for expensive queries:</p>
+<pre><code class="language-python"># In service methods
+cache_key = f"rack_capacity:{rack_id}"
+cached = redis_client.get(cache_key)
+if cached:
+    return json.loads(cached)
+
+# Calculate and cache
+result = calculate_capacity(rack_id)
+redis_client.setex(cache_key, 300, json.dumps(result))  # 5 min TTL
+return result
+</code></pre>
+
+<h2>Troubleshooting</h2>
+
+<h3>Common Issues</h3>
+
+<p><strong>1. Database connection failed</strong></p>
+<pre><code class="language-bash"># Check database is running
+docker-compose ps db
+
+# Check connection
+docker-compose exec backend psql $DATABASE_URL -c "SELECT 1"
+
+# Check logs
+docker-compose logs db
+</code></pre>
+
+<p><strong>2. Frontend can't reach backend</strong></p>
+<pre><code class="language-bash"># Check CORS settings (CRITICAL if using reverse proxy or accessing from IP)
+# If using a reverse proxy, ensure CORS_ORIGINS includes your proxy origin
+# Example: CORS_ORIGINS=["https://dcms.example.com", "http://localhost:3000"]
+# Verify REACT_APP_API_URL in frontend/.env
+# Check backend CORS_ORIGINS in .env (root directory for Docker)
+</code></pre>
+
+<p><strong>3. High memory usage</strong></p>
+<pre><code class="language-bash"># Check container stats
+docker stats
+
+# Limit memory
+docker-compose down
+# Edit docker-compose.yml to add memory limits
+docker-compose up -d
+</code></pre>
+
+<p><strong>4. Slow API responses</strong></p>
+<pre><code class="language-bash"># Check database query performance
+# Enable SQL logging in backend
+DEBUG_SQL=True
+
+# Check Celery queue backlog
+docker-compose exec redis redis-cli LLEN celery
+
+# Add database indexes
+</code></pre>
+
+<h2>Maintenance</h2>
+
+<h3>Regular Tasks</h3>
+
+<ul>
+<li><strong>Daily</strong>: Check logs for errors</li>
+<li><strong>Weekly</strong>: Review capacity metrics</li>
+<li><strong>Monthly</strong>: Update dependencies</li>
+<li><strong>Quarterly</strong>: Security audit</li>
+<li><strong>Annually</strong>: Disaster recovery test</li>
+</ul>
+
+<h3>Updates</h3>
+
+<pre><code class="language-bash"># Pull latest changes
+git pull origin main
+
+# Rebuild containers
+docker-compose build
+
+# Apply database migrations (if any)
+docker-compose exec backend alembic upgrade head
+
+# Restart services
+docker-compose down
+docker-compose up -d
+</code></pre>
+
+<hr>
+
+<p>For additional support, consult the main README.md or open an issue on GitHub.</p>
+
+            </article>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

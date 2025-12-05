@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RackPlane Documentation - RackPlane Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">RackPlane</h1>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search documentation...">
+                <div id="searchResults" class="search-results"></div>
+            </div>
+            <nav class="nav-menu" id="navMenu">
+                <div class="nav-category">Getting Started</div>
+<ul class="nav-items">
+<li><a href="README.html" class="active">RackPlane Documentation</a></li>
+</ul>
+<div class="nav-category">Setup & Installation</div>
+<ul class="nav-items">
+<li><a href="DEPLOYMENT.html" class="">Deployment Guide</a></li>
+<li><a href="NETBOX_SETUP.html" class="">NetBox Integration Setup Guide</a></li>
+<li><a href="LABEL_PRINTING.html" class="">Label Printing Guide</a></li>
+<li><a href="QUICK_FIX.html" class="">🚨 QUICK FIX: Database "dcms" Does Not Exist</a></li>
+</ul>
+<div class="nav-category">User Guides</div>
+<ul class="nav-items">
+<li><a href="STOCK_MANAGEMENT_GUIDE.html" class="">Stock Management Guide</a></li>
+<li><a href="TENANT_ONBOARDING.html" class="">Tenant Onboarding Documentation</a></li>
+</ul>
+<div class="nav-category">Backup & Recovery</div>
+<ul class="nav-items">
+<li><a href="BACKUP_GUIDE.html" class="">Database Backup & Restore Guide</a></li>
+<li><a href="CROSS_SERVER_BACKUP.html" class="">Cross-Server Backup & Restore Guide</a></li>
+<li><a href="EMERGENCY_RECOVERY.html" class="">🚨 EMERGENCY DATABASE RECOVERY GUIDE</a></li>
+</ul>
+<div class="nav-category">API Reference</div>
+<ul class="nav-items">
+<li><a href="API_DOCUMENTATION.html" class="">API Documentation</a></li>
+</ul>
+            </nav>
+        </aside>
+        <main class="content">
+            <article class="doc-content">
+                <h1>RackPlane Documentation</h1>
+
+<p>This directory contains comprehensive documentation for RackPlane, a multi-tenant SaaS platform for datacenter hardware and inventory management.</p>
+
+<h2>Documentation Index</h2>
+
+<h3>Setup & Configuration</h3>
+
+<h4>Email & Alerts</h4>
+<ul>
+<li><strong><a href="EMAIL<em>ALERTS</em>SETUP.md">Email Alerts Setup</a></strong> - Configure email notifications for low stock, maintenance, and warranty alerts</li>
+<li><strong><a href="SENDGRID<em>SETUP</em>CHECKLIST.md">SendGrid Setup Checklist</a></strong> - Step-by-step SendGrid integration guide</li>
+</ul>
+
+<h4>Vendor Integration</h4>
+<ul>
+<li><strong><a href="VENDOR<em>API</em>INTEGRATION.md">Vendor API Integration</a></strong> - Integrate with vendor APIs (Dell, HP, etc.) for warranty and configuration data</li>
+<li><strong><a href="DELL<em>API</em>SETUP.md">Dell API Setup</a></strong> - Configure Dell API access for warranty lookups</li>
+<li><strong><a href="VENDOR<em>SKU</em>CATALOG.md">Vendor SKU Catalog</a></strong> - Manage vendor SKU catalog for product information</li>
+<li><strong><a href="VENDOR<em>SKU</em>QUICK_START.md">Vendor SKU Quick Start</a></strong> - Quick start guide for vendor SKU management</li>
+<li><strong><a href="FS<em>SCRAPER</em>GUIDE.md">FS.com Scraper Guide</a></strong> - Guide for scraping FS.com product data</li>
+<li><strong><a href="HOW<em>TO</em>FIND<em>FS</em>SKUS.md">How to Find FS.com SKUs</a></strong> - Instructions for finding FS.com product SKUs</li>
+</ul>
+
+<h4>Integrations</h4>
+<ul>
+<li><strong><a href="NETBOX_SETUP.md">NetBox Setup</a></strong> - Configure NetBox IPAM/DCIM synchronization</li>
+<li><strong><a href="LABEL_PRINTING.md">Label Printing</a></strong> - Set up Brother PT-E550W label printing</li>
+</ul>
+
+<h3>Core Features</h3>
+
+<ul>
+<li><strong><a href="STOCK<em>MANAGEMENT</em>GUIDE.md">Stock Management Guide</a></strong> - Complete guide to stock management and storage boxes</li>
+<li><strong><a href="TENANT_ONBOARDING.md">Tenant Onboarding</a></strong> - Guide for onboarding new tenants</li>
+</ul>
+
+<h3>Backup & Recovery</h3>
+
+<ul>
+<li><strong><a href="BACKUP_GUIDE.md">Backup Guide</a></strong> - Database backup and restore procedures</li>
+<li><strong><a href="CROSS<em>SERVER</em>BACKUP.md">Cross-Server Backup</a></strong> - Backup and restore across different servers</li>
+<li><strong><a href="EMERGENCY_RECOVERY.md">Emergency Recovery</a></strong> - Emergency database recovery procedures</li>
+</ul>
+
+<h3>Development</h3>
+
+<ul>
+<li><strong><a href="DEVELOPMENT_CHECKLIST.md">Development Checklist</a></strong> - Feature completion checklist for developers</li>
+<li><strong><a href="TEST<em>COVERAGE</em>AND_FIXES.md">Test Coverage and Fixes</a></strong> - Test coverage documentation</li>
+<li><strong><a href="PATCH<em>FEATURES</em>VERIFICATION.md">Patch Features Verification</a></strong> - Verification guide for patch features</li>
+<li><strong><a href="SERIAL<em>GENERATION</em>VERIFICATION.md">Serial Generation Verification</a></strong> - Serial number generation verification</li>
+<li><strong><a href="PREVENTING<em>MISSING</em>INTEGRATIONS.md">Preventing Missing Integrations</a></strong> - Guide to prevent missing integrations</li>
+</ul>
+
+<h3>API Documentation</h3>
+
+<ul>
+<li><strong><a href="API_DOCUMENTATION.md">API Documentation</a></strong> - Complete API reference</li>
+</ul>
+
+<h3>Deployment</h3>
+
+<ul>
+<li><strong><a href="DEPLOYMENT.md">Deployment Guide</a></strong> - Deployment options and instructions</li>
+</ul>
+
+<h2>Quick Links</h2>
+
+<ul>
+<li><strong>Getting Started</strong>: See <a href="../README.md">README.md</a> in the root directory</li>
+<li><strong>API Reference</strong>: <a href="API</em>DOCUMENTATION.md">API<em>DOCUMENTATION.md</a></li>
+<li><strong>Backup Procedures</strong>: <a href="BACKUP</em>GUIDE.md">BACKUP<em>GUIDE.md</a></li>
+<li><strong>Email Setup</strong>: <a href="EMAIL<em>ALERTS</em>SETUP.md">EMAIL<em>ALERTS</em>SETUP.md</a></li>
+</ul>
+
+<h2>Note on OCR Documentation</h2>
+
+<p>OCR-related documentation (Cloud OCR, Enhanced OCR, Google Vision setup) is currently in development and not included in this index. These will be added once the OCR features are complete.</p>
+
+
+            </article>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

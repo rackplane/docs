@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Label Printing Guide - RackPlane Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">RackPlane</h1>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search documentation...">
+                <div id="searchResults" class="search-results"></div>
+            </div>
+            <nav class="nav-menu" id="navMenu">
+                <div class="nav-category">Getting Started</div>
+<ul class="nav-items">
+<li><a href="README.html" class="">RackPlane Documentation</a></li>
+</ul>
+<div class="nav-category">Setup & Installation</div>
+<ul class="nav-items">
+<li><a href="DEPLOYMENT.html" class="">Deployment Guide</a></li>
+<li><a href="NETBOX_SETUP.html" class="">NetBox Integration Setup Guide</a></li>
+<li><a href="LABEL_PRINTING.html" class="active">Label Printing Guide</a></li>
+<li><a href="QUICK_FIX.html" class="">🚨 QUICK FIX: Database "dcms" Does Not Exist</a></li>
+</ul>
+<div class="nav-category">User Guides</div>
+<ul class="nav-items">
+<li><a href="STOCK_MANAGEMENT_GUIDE.html" class="">Stock Management Guide</a></li>
+<li><a href="TENANT_ONBOARDING.html" class="">Tenant Onboarding Documentation</a></li>
+</ul>
+<div class="nav-category">Backup & Recovery</div>
+<ul class="nav-items">
+<li><a href="BACKUP_GUIDE.html" class="">Database Backup & Restore Guide</a></li>
+<li><a href="CROSS_SERVER_BACKUP.html" class="">Cross-Server Backup & Restore Guide</a></li>
+<li><a href="EMERGENCY_RECOVERY.html" class="">🚨 EMERGENCY DATABASE RECOVERY GUIDE</a></li>
+</ul>
+<div class="nav-category">API Reference</div>
+<ul class="nav-items">
+<li><a href="API_DOCUMENTATION.html" class="">API Documentation</a></li>
+</ul>
+            </nav>
+        </aside>
+        <main class="content">
+            <article class="doc-content">
+                <h1>Label Printing Guide</h1>
+
+<h2>Overview</h2>
+
+<p>The Datacenter Inventory Management System system includes comprehensive label printing functionality optimized for the <strong>Brother PT-E550W</strong> label printer. You can print professional labels with QR codes for assets and storage containers, making physical identification and tracking simple and efficient.</p>
+
+<h2>Features</h2>
+
+<ul>
+<li><strong>Print labels for any asset</strong> (servers, switches, cables, cards, NICs, DPUs, transceivers, etc.)</li>
+<li><strong>Print labels for storage containers</strong> (boxes, bins, shelves, cabinets, etc.)</li>
+<li><strong>Brother PT-E550W optimization</strong> with support for standard tape widths</li>
+<li><strong>QR code integration</strong> - each label includes a scannable QR code</li>
+<li><strong>Browser-based printing</strong> - works immediately without additional setup</li>
+<li><strong>Optional direct printer support</strong> - send jobs directly to network printers</li>
+<li><strong>Professional label design</strong> - compact, readable format optimized for label tape</li>
+</ul>
+
+<h2>Where to Print Labels</h2>
+
+<h3>1. Assets Table (All Asset Types)</h3>
+<p><strong>Location:</strong> Assets page → Any row in the table</p>
+
+<ol>
+<li>Navigate to the <strong>Assets</strong> page</li>
+<li>Find the asset you want to label</li>
+<li>Click the <strong>🏷️ Label</strong> button in the Actions column</li>
+<li>Label preview modal opens</li>
+</ol>
+
+<p><strong>Available for:</strong> All asset types including cables, cards, servers, switches, NICs, DPUs, transceivers, and more.</p>
+
+<h3>2. Asset Detail Page</h3>
+<p><strong>Location:</strong> Individual asset detail page → Header</p>
+
+<ol>
+<li>Navigate to any asset detail page</li>
+<li>Click <strong>🏷️ Print Label</strong> button in the page header</li>
+<li>Label preview modal opens</li>
+</ol>
+
+<h3>3. Storage Containers Table</h3>
+<p><strong>Location:</strong> Storage Containers page → Any row in the table</p>
+
+<ol>
+<li>Navigate to the <strong>Storage Containers</strong> page</li>
+<li>Find the container you want to label</li>
+<li>Click the <strong>🏷️ Label</strong> button in the Actions column</li>
+<li>Label preview modal opens</li>
+</ol>
+
+<p><strong>Available for:</strong> All storage container types (box, bin, shelf, cabinet, drawer, rack, pallet).</p>
+
+<h2>Label Sizes</h2>
+
+<p>The Brother PT-E550W supports two tape widths. Our label templates are optimized for:</p>
+
+<h3>12mm (0.47") Tape</h3>
+<ul>
+<li><strong>Label Dimensions:</strong> Variable length × 12mm</li>
+<li><strong>QR Code Size:</strong> 10mm × 10mm</li>
+<li><strong>Font Sizes:</strong> 4-5pt</li>
+<li><strong>Best For:</strong> Small items, compact labels, cables, cards</li>
+</ul>
+
+<h3>24mm (0.94") Tape</h3>
+<ul>
+<li><strong>Label Dimensions:</strong> Variable length × 24mm</li>
+<li><strong>QR Code Size:</strong> 18mm × 18mm</li>
+<li><strong>Font Sizes:</strong> 6-7pt</li>
+<li><strong>Best For:</strong> Standard labels, servers, switches, storage containers</li>
+</ul>
+
+<p><strong>Note:</strong> The PT-E550W supports 12mm and 24mm tape only. 36mm tape is not supported by this model.</p>
+
+<h2>Label Contents</h2>
+
+<h3>Asset Labels Include:</h3>
+<ul>
+<li><strong>QR Code</strong> with asset data (ID, asset tag, serial number, type, manufacturer, model)</li>
+<li><strong>Asset Tag</strong> (bold, prominent)</li>
+<li><strong>Manufacturer & Model</strong></li>
+<li><strong>Serial Number</strong></li>
+<li><strong>Hostname</strong> (if available)</li>
+</ul>
+
+<h3>Storage Container Labels Include:</h3>
+<ul>
+<li><strong>QR Code</strong> with container data (ID, name, type, barcode, location)</li>
+<li><strong>Container Name</strong> (bold, prominent)</li>
+<li><strong>Container Type</strong> (box, bin, shelf, etc.)</li>
+<li><strong>Barcode</strong> (if set)</li>
+<li><strong>Location</strong> (if set)</li>
+</ul>
+
+<h2>How to Print Labels</h2>
+
+<h3>Method 1: Print via Browser (Recommended)</h3>
+
+<p>This method works immediately without any setup and is compatible with all printers.</p>
+
+<ol>
+<li>Click the <strong>🏷️ Label</strong> or <strong>🏷️ Print Label</strong> button</li>
+<li>Review the label preview</li>
+<li>Select your tape size:</li>
+</ol>
+<p>- ☑️ <strong>12mm (0.47")</strong> - ☑️ <strong>24mm (0.94")</strong></p>
+<ol>
+<li>Click <strong>Print via Browser</strong></li>
+<li>In the print dialog:</li>
+</ol>
+<p>- Select your <strong>Brother PT-E550W</strong> printer - Ensure paper size matches tape width - Print!</p>
+
+<h3>Method 2: Send to Printer Directly (Optional)</h3>
+
+<p>For network-connected Brother PT-E550W printers, you can configure direct printing.</p>
+
+<p><strong>Setup:</strong></p>
+<ol>
+<li>Ensure your Brother PT-E550W is connected to your network</li>
+<li>Find your printer's IP address:</li>
+</ol>
+<p>- On printer LCD: Menu → Network → IP Address</p>
+<ol>
+<li>In the label print dialog:</li>
+</ol>
+<p>- Expand <strong>"Direct Printer Setup (Optional)"</strong> - Enter printer IP address (e.g., <code>192.168.1.100</code>) - IP is saved in your browser for future use</p>
+<ol>
+<li>Click <strong>Send to Printer Directly</strong></li>
+</ol>
+
+<p><strong>Note:</strong> Direct printing requires additional Brother SDK integration on the backend server. The browser printing method is recommended for most users.</p>
+
+<h2>Brother PT-E550W Setup</h2>
+
+<h3>Printer Configuration</h3>
+
+<ol>
+<li><strong>Install Tape:</strong></li>
+</ol>
+<p>- Use Brother TZe laminated tape cassettes - Recommended widths: 12mm or 24mm - Supports various colors (white on black, black on white, etc.)</p>
+
+<ol>
+<li><strong>Connect to Network (for direct printing):</strong></li>
+</ol>
+<p>- Menu → Network → Wireless LAN → Setup - Follow on-screen instructions to connect to WiFi - Note the assigned IP address</p>
+
+<ol>
+<li><strong>USB Connection (alternative):</strong></li>
+</ol>
+<p>- Connect printer to computer via USB - Install Brother P-touch Editor drivers - Use browser printing method</p>
+
+<h3>Recommended Settings</h3>
+
+<ul>
+<li><strong>Print Quality:</strong> Best</li>
+<li><strong>Tape Width:</strong> Match your installed tape (12mm or 24mm)</li>
+<li><strong>Auto Cut:</strong> ON (for individual labels)</li>
+<li><strong>Chain Print:</strong> OFF (for individual labels)</li>
+</ul>
+
+<h2>QR Code Scanning</h2>
+
+<p>Each label includes a QR code that can be scanned to quickly identify and locate items in the system.</p>
+
+<h3>What's in the QR Code?</h3>
+
+<p><strong>Asset QR Codes contain:</strong></p>
+<pre><code class="language-json">{
+  "id": 123,
+  "asset_tag": "SRV-001",
+  "serial_number": "ABC123XYZ",
+  "asset_type": "server",
+  "manufacturer": "Dell",
+  "model": "PowerEdge R740"
+}
+</code></pre>
+
+<p><strong>Container QR Codes contain:</strong></p>
+<pre><code class="language-json">{
+  "type": "container",
+  "id": 45,
+  "name": "Box A-12",
+  "container_type": "box",
+  "barcode": "BOX-A-12",
+  "location": "Aisle 3, Bay 5"
+}
+</code></pre>
+
+<h3>Scanning Labels</h3>
+
+<p>Use the built-in barcode scanner feature:</p>
+
+<ol>
+<li>Go to <strong>Assets</strong> page</li>
+<li>Click the <strong>📷 Scan</strong> button</li>
+<li>Point camera at QR code</li>
+<li>System automatically identifies and opens the item</li>
+</ol>
+
+<h2>Label Design Specifications</h2>
+
+<h3>Layout</h3>
+<pre><code>┌─────────────────────────────────────┐
+│  ┌────┐                             │
+│  │ QR │  Asset Tag / Container Name │
+│  │Code│  Manufacturer &amp; Model       │
+│  └────┘  Serial Number / Details    │
+└─────────────────────────────────────┘
+</code></pre>
+
+<h3>Design Features</h3>
+<ul>
+<li><strong>High contrast</strong> black text on white background</li>
+<li><strong>Monospace font</strong> for serial numbers and barcodes</li>
+<li><strong>Text overflow handling</strong> with ellipsis</li>
+<li><strong>Optimized spacing</strong> for label printer output</li>
+<li><strong>Print-friendly</strong> CSS with proper margins</li>
+</ul>
+
+<h2>Troubleshooting</h2>
+
+<h3>Label Not Printing</h3>
+
+<p><strong>Problem:</strong> Nothing happens when clicking "Print via Browser"</p>
+
+<p><strong>Solution:</strong></p>
+<ul>
+<li>Check that printer is powered on and connected</li>
+<li>Verify correct printer is selected in print dialog</li>
+<li>Try printing a test page from printer settings</li>
+<li>Ensure browser has printer access permissions</li>
+</ul>
+
+<h3>QR Code Not Scanning</h3>
+
+<p><strong>Problem:</strong> QR code on label won't scan</p>
+
+<p><strong>Solution:</strong></p>
+<ul>
+<li>Ensure adequate lighting</li>
+<li>Hold camera 6-12 inches from label</li>
+<li>Try different angles</li>
+<li>Clean camera lens</li>
+<li>Verify printer quality settings are set to "Best"</li>
+</ul>
+
+<h3>Label Size Incorrect</h3>
+
+<p><strong>Problem:</strong> Label prints too large or too small</p>
+
+<p><strong>Solution:</strong></p>
+<ul>
+<li>In print dialog, set page size to match tape width</li>
+<li>For 12mm tape: Select "12mm" or "0.47 inch"</li>
+<li>For 24mm tape: Select "24mm" or "0.94 inch"</li>
+<li>Disable "Fit to page" or "Scale to fit" options</li>
+</ul>
+
+<h3>Text Cut Off on Label</h3>
+
+<p><strong>Problem:</strong> Text is truncated or missing</p>
+
+<p><strong>Solution:</strong></p>
+<ul>
+<li>Text automatically truncates if too long</li>
+<li>Use shorter asset tags or names</li>
+<li>Try larger tape size (24mm vs 12mm)</li>
+<li>Verify printer margins are set to minimum</li>
+</ul>
+
+<h3>Direct Printing Not Working</h3>
+
+<p><strong>Problem:</strong> "Send to Printer Directly" fails</p>
+
+<p><strong>Solution:</strong></p>
+<ul>
+<li>Verify printer IP address is correct</li>
+<li>Ensure printer is on same network as server</li>
+<li>Check firewall settings (allow port 9100)</li>
+<li>Use "Print via Browser" as alternative</li>
+<li>Consider installing Brother P-touch SDK on print server</li>
+</ul>
+
+<h2>Best Practices</h2>
+
+<h3>Labeling Strategy</h3>
+
+<ol>
+<li><strong>Print labels in batches</strong> for new equipment</li>
+<li><strong>Apply labels to visible locations</strong>:</li>
+</ol>
+<p>- Servers: Front bezel or top - Switches: Front panel or side - Cables: Both ends (use smaller 24mm tape) - Storage boxes: Multiple sides for visibility</p>
+<ol>
+<li><strong>Use protective label covers</strong> for high-wear areas</li>
+<li><strong>Keep backup labels</strong> for critical assets</li>
+<li><strong>Update labels</strong> when asset information changes</li>
+</ol>
+
+<h3>Label Placement</h3>
+
+<p><strong>Servers:</strong></p>
+<ul>
+<li>Front bezel (primary)</li>
+<li>Top cover (secondary)</li>
+<li>Avoid blocking ventilation</li>
+</ul>
+
+<p><strong>Switches:</strong></p>
+<ul>
+<li>Front panel above ports</li>
+<li>Side panel if front is crowded</li>
+</ul>
+
+<p><strong>Cables:</strong></p>
+<ul>
+<li>Both connectors (use small labels)</li>
+<li>Cable management tags</li>
+</ul>
+
+<p><strong>Storage Containers:</strong></p>
+<ul>
+<li>Front panel (primary)</li>
+<li>Side panels (for shelf visibility)</li>
+<li>Top (for stacked containers)</li>
+</ul>
+
+<h3>Tape Selection</h3>
+
+<ul>
+<li><strong>White on Black:</strong> High visibility, professional</li>
+<li><strong>Black on White:</strong> Standard, good for most uses</li>
+<li><strong>Black on Clear:</strong> Discrete, blends with surfaces</li>
+<li><strong>Fluorescent:</strong> High-visibility for critical items</li>
+</ul>
+
+<h2>Advanced Features</h2>
+
+<h3>Custom Label Data</h3>
+
+<p>QR codes can be scanned by external apps and systems. The JSON data format is standard and can be parsed by:</p>
+<ul>
+<li>Mobile barcode scanner apps</li>
+<li>Asset tracking systems</li>
+<li>Inventory management software</li>
+<li>Custom integration scripts</li>
+</ul>
+
+<h3>API Integration</h3>
+
+<p>Labels can be generated programmatically via API:</p>
+
+<p><strong>Generate QR Code for Asset:</strong></p>
+<pre><code class="language-bash">GET /api/v1/barcodes/generate/{asset_id}
+</code></pre>
+
+<p><strong>Generate QR Code for Container:</strong></p>
+<pre><code class="language-bash">GET /api/v1/barcodes/generate-container/{container_id}
+</code></pre>
+
+<p><strong>Print Label (Direct):</strong></p>
+<pre><code class="language-bash">POST /api/v1/barcodes/print-label/{asset_id}
+POST /api/v1/barcodes/print-container-label/{container_id}
+
+Body: {
+  "label_size": "24mm",
+  "printer_ip": "192.168.1.100"
+}
+</code></pre>
+
+<h2>Accessibility</h2>
+
+<ul>
+<li><strong>No login required</strong> - Anyone can print labels</li>
+<li><strong>Keyboard navigation</strong> - All buttons accessible via keyboard</li>
+<li><strong>Screen reader compatible</strong> - Proper ARIA labels</li>
+<li><strong>Color blind friendly</strong> - High contrast, not reliant on color</li>
+</ul>
+
+<h2>Support</h2>
+
+<p>For additional help:</p>
+<ul>
+<li>Check printer status on Brother PT-E550W LCD</li>
+<li>Review Brother P-touch Editor documentation</li>
+<li>Verify tape cassette is installed correctly</li>
+<li>Test with simple text label before printing QR codes</li>
+</ul>
+
+<h2>Technical Details</h2>
+
+<h3>Printer Specifications</h3>
+<ul>
+<li><strong>Model:</strong> Brother PT-E550W</li>
+<li><strong>Type:</strong> Label printer with thermal transfer</li>
+<li><strong>Connectivity:</strong> USB, WiFi, Ethernet (via adapter)</li>
+<li><strong>Tape Types:</strong> TZe laminated tape (12mm and 24mm supported)</li>
+<li><strong>Resolution:</strong> 180 dpi</li>
+<li><strong>Max Print Speed:</strong> 30mm/sec</li>
+</ul>
+
+<h3>Supported Brother Printers</h3>
+
+<p>The system uses the <code>labelprinterkit</code> library which supports multiple Brother P-Touch printer models:</p>
+
+<ul>
+<li><strong>PT-E500</strong> - Entry-level model</li>
+<li><strong>PT-E550W</strong> - Current model (supports 12mm and 24mm tape)</li>
+<li><strong>PT-H500</strong> - High-end model</li>
+<li><strong>PT-P700</strong> - Professional model</li>
+<li><strong>PT-P750W</strong> - Professional wireless model</li>
+</ul>
+
+<p><strong>Note:</strong> The current implementation is configured for PT-E550W. To use other models, the printer class in <code>brother_printer.py</code> would need to be updated to use the appropriate printer class (E500, H500, P700, or P750W) from <code>labelprinterkit.printers</code>.</p>
+
+<h3>Supported Browsers</h3>
+<ul>
+<li>Chrome/Edge (recommended)</li>
+<li>Firefox</li>
+<li>Safari</li>
+<li>Any modern browser with print support</li>
+</ul>
+
+<h3>Requirements</h3>
+<ul>
+<li>Brother PT-E550W label printer</li>
+<li>TZe tape cassettes (12mm or 24mm)</li>
+<li>Web browser with printer access</li>
+<li>Network connection (for direct printing)</li>
+</ul>
+
+<hr>
+
+<p><strong>Last Updated:</strong> 2025-01-17 <strong>Version:</strong> 1.0 <strong>Compatible with:</strong> Datacenter Inventory Management System v1.0+</p>
+
+            </article>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

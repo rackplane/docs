@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚨 EMERGENCY DATABASE RECOVERY GUIDE - RackPlane Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">RackPlane</h1>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search documentation...">
+                <div id="searchResults" class="search-results"></div>
+            </div>
+            <nav class="nav-menu" id="navMenu">
+                <div class="nav-category">Getting Started</div>
+<ul class="nav-items">
+<li><a href="README.html" class="">RackPlane Documentation</a></li>
+</ul>
+<div class="nav-category">Setup & Installation</div>
+<ul class="nav-items">
+<li><a href="DEPLOYMENT.html" class="">Deployment Guide</a></li>
+<li><a href="NETBOX_SETUP.html" class="">NetBox Integration Setup Guide</a></li>
+<li><a href="LABEL_PRINTING.html" class="">Label Printing Guide</a></li>
+<li><a href="QUICK_FIX.html" class="">🚨 QUICK FIX: Database "dcms" Does Not Exist</a></li>
+</ul>
+<div class="nav-category">User Guides</div>
+<ul class="nav-items">
+<li><a href="STOCK_MANAGEMENT_GUIDE.html" class="">Stock Management Guide</a></li>
+<li><a href="TENANT_ONBOARDING.html" class="">Tenant Onboarding Documentation</a></li>
+</ul>
+<div class="nav-category">Backup & Recovery</div>
+<ul class="nav-items">
+<li><a href="BACKUP_GUIDE.html" class="">Database Backup & Restore Guide</a></li>
+<li><a href="CROSS_SERVER_BACKUP.html" class="">Cross-Server Backup & Restore Guide</a></li>
+<li><a href="EMERGENCY_RECOVERY.html" class="active">🚨 EMERGENCY DATABASE RECOVERY GUIDE</a></li>
+</ul>
+<div class="nav-category">API Reference</div>
+<ul class="nav-items">
+<li><a href="API_DOCUMENTATION.html" class="">API Documentation</a></li>
+</ul>
+            </nav>
+        </aside>
+        <main class="content">
+            <article class="doc-content">
+                <h1>🚨 EMERGENCY DATABASE RECOVERY GUIDE</h1>
+
+<h2>Quick Diagnosis</h2>
+
+<p>Run the diagnostic script first:</p>
+<pre><code class="language-bash">./diagnose_database.sh
+</code></pre>
+
+<h2>Common Issues & Solutions</h2>
+
+<h3>Issue 1: Database Container Not Running</h3>
+<p><strong>Symptoms:</strong> Can't see any data, API errors</p>
+
+<p><strong>Solution:</strong></p>
+<pre><code class="language-bash"># Restart containers
+docker-compose down
+docker-compose up -d
+
+# Check status
+docker-compose ps
+</code></pre>
+
+<h3>Issue 2: Tables Don't Exist (Fresh Database)</h3>
+<p><strong>Symptoms:</strong> Diagnostic shows no tables</p>
+
+<p><strong>Solution - Recreate tables:</strong></p>
+<pre><code class="language-bash"># The app should auto-create tables on startup
+docker-compose restart backend
+
+# Or manually trigger table creation
+docker-compose exec backend python -c "from app.core.database import engine, Base; Base.metadata.create_all(bind=engine)"
+</code></pre>
+
+<h3>Issue 3: Database Volume Was Reset</h3>
+<p><strong>Symptoms:</strong> Tables exist but are empty</p>
+
+<p><strong>Check if you have a backup:</strong></p>
+<pre><code class="language-bash"># Look for backup files
+ls -lh *.json
+ls -lh ~/Downloads/*.json
+ls -lh /backups/*.json
+</code></pre>
+
+<p><strong>If you have a backup:</strong></p>
+<pre><code class="language-bash"># Import the backup
+docker-compose exec backend python backup_cli.py import /app/your_backup.json --clear
+</code></pre>
+
+<p><strong>If NO backup exists:</strong></p>
+<ul>
+<li>Data may be unrecoverable if Docker volume was deleted</li>
+<li>Check Docker volumes: <code>docker volume ls</code></li>
+<li>Try to restore from Docker volume backup if available</li>
+</ul>
+
+<h3>Issue 4: Wrong Database Connection</h3>
+<p><strong>Symptoms:</strong> Empty database but containers are running</p>
+
+<p><strong>Check database name:</strong></p>
+<pre><code class="language-bash"># List all databases
+docker-compose exec db psql -U postgres -c "\l"
+
+# Your app database should be: datacenter_db
+# If it's different, update .env (root directory for Docker, or backend/.env for direct backend)
+</code></pre>
+
+<h3>Issue 5: Database Data Directory Lost</h3>
+<p><strong>Symptoms:</strong> Container runs but data is missing</p>
+
+<p><strong>Check Docker volumes:</strong></p>
+<pre><code class="language-bash"># List volumes
+docker volume ls | grep datacenter
+
+# Inspect the volume
+docker volume inspect rackplane_postgres_data
+
+# Check if data directory exists
+docker-compose exec db ls -la /var/lib/postgresql/data
+</code></pre>
+
+<h2>Emergency Recovery Steps</h2>
+
+<h3>Step 1: Stop Everything</h3>
+<pre><code class="language-bash">docker-compose down
+</code></pre>
+
+<h3>Step 2: Check What Exists</h3>
+<pre><code class="language-bash"># Check for Docker volumes
+docker volume ls | grep datacenter
+
+# Check for backup files
+find . -name "*backup*.json" -o -name "datacenter*.json"
+</code></pre>
+
+<h3>Step 3: Recovery Decision Tree</h3>
+
+<h4>A. If Docker volume exists:</h4>
+<pre><code class="language-bash"># Restart with existing volume
+docker-compose up -d
+
+# Check if data is there
+./diagnose_database.sh
+</code></pre>
+
+<h4>B. If volume is gone but you have a backup:</h4>
+<pre><code class="language-bash"># Start fresh
+docker-compose up -d
+
+# Wait for containers to be ready
+sleep 10
+
+# Import backup
+docker-compose exec backend python backup_cli.py import /path/to/backup.json --clear
+</code></pre>
+
+<h4>C. If no volume and no backup:</h4>
+<pre><code class="language-bash"># Start fresh (data is lost)
+docker-compose up -d
+
+# Manually re-enter critical data
+# Or contact support if this is production
+</code></pre>
+
+<h2>Prevent Future Data Loss</h2>
+
+<h3>1. Set up automated backups immediately:</h3>
+<pre><code class="language-bash"># Add to crontab (crontab -e)
+0 2 * * * cd /home/snoble/dcms/backend &amp;&amp; docker-compose exec -T backend python backup_cli.py export --output /backups/daily_backup_$(date +\%Y\%m\%d).json
+</code></pre>
+
+<h3>2. Configure Docker volume persistence:</h3>
+<p>Check <code>docker-compose.yml</code> has:</p>
+<pre><code class="language-yaml">volumes:
+  postgres_data:
+    driver: local
+</code></pre>
+
+<h3>3. Create immediate backup:</h3>
+<pre><code class="language-bash"># Via CLI
+docker-compose exec backend python backup_cli.py export --output emergency_backup.json
+
+# Copy from container
+docker cp dcms-backend:/app/emergency_backup_*.json ./
+
+# Or via API
+curl -o emergency_backup.json http://localhost:8000/api/v1/backup/export
+</code></pre>
+
+<h2>Quick Data Recovery Checklist</h2>
+
+<ul>
+<li>[ ] Run <code>./diagnose_database.sh</code></li>
+<li>[ ] Check Docker containers are running: <code>docker-compose ps</code></li>
+<li>[ ] Check database logs: <code>docker-compose logs db</code></li>
+<li>[ ] Check if tables exist</li>
+<li>[ ] Check if Docker volume exists</li>
+<li>[ ] Look for backup files</li>
+<li>[ ] Import backup if found</li>
+<li>[ ] Set up automated backups</li>
+<li>[ ] Document what happened</li>
+</ul>
+
+<h2>Get Help</h2>
+
+<p>If you can't recover:</p>
+<ol>
+<li>Share output of <code>./diagnose_database.sh</code></li>
+<li>Check <code>docker-compose logs</code> for errors</li>
+<li>Look for any recent system changes</li>
+<li>Check disk space: <code>df -h</code></li>
+<li>Check Docker volume status</li>
+</ol>
+
+<h2>Prevention is Key</h2>
+
+<p><strong>After recovery, IMMEDIATELY:</strong></p>
+<ol>
+<li>Export a backup: <code>curl -o backup.json http://localhost:8000/api/v1/backup/export</code></li>
+<li>Store it safely (cloud + local)</li>
+<li>Set up automated daily backups</li>
+<li>Test backup restoration monthly</li>
+</ol>
+
+            </article>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Management Guide - RackPlane Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">RackPlane</h1>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search documentation...">
+                <div id="searchResults" class="search-results"></div>
+            </div>
+            <nav class="nav-menu" id="navMenu">
+                <div class="nav-category">Getting Started</div>
+<ul class="nav-items">
+<li><a href="README.html" class="">RackPlane Documentation</a></li>
+</ul>
+<div class="nav-category">Setup & Installation</div>
+<ul class="nav-items">
+<li><a href="DEPLOYMENT.html" class="">Deployment Guide</a></li>
+<li><a href="NETBOX_SETUP.html" class="">NetBox Integration Setup Guide</a></li>
+<li><a href="LABEL_PRINTING.html" class="">Label Printing Guide</a></li>
+<li><a href="QUICK_FIX.html" class="">🚨 QUICK FIX: Database "dcms" Does Not Exist</a></li>
+</ul>
+<div class="nav-category">User Guides</div>
+<ul class="nav-items">
+<li><a href="STOCK_MANAGEMENT_GUIDE.html" class="active">Stock Management Guide</a></li>
+<li><a href="TENANT_ONBOARDING.html" class="">Tenant Onboarding Documentation</a></li>
+</ul>
+<div class="nav-category">Backup & Recovery</div>
+<ul class="nav-items">
+<li><a href="BACKUP_GUIDE.html" class="">Database Backup & Restore Guide</a></li>
+<li><a href="CROSS_SERVER_BACKUP.html" class="">Cross-Server Backup & Restore Guide</a></li>
+<li><a href="EMERGENCY_RECOVERY.html" class="">🚨 EMERGENCY DATABASE RECOVERY GUIDE</a></li>
+</ul>
+<div class="nav-category">API Reference</div>
+<ul class="nav-items">
+<li><a href="API_DOCUMENTATION.html" class="">API Documentation</a></li>
+</ul>
+            </nav>
+        </aside>
+        <main class="content">
+            <article class="doc-content">
+                <h1>Stock Management Guide</h1>
+
+<p>This guide explains how to use the Stock Management features in DCMS to track inventory in storage boxes and automatically manage stock levels.</p>
+
+<h2>Overview</h2>
+
+<p>The Stock Management system allows you to:</p>
+<ul>
+<li>Create storage boxes (assets with stock tracking enabled)</li>
+<li>Add items to storage boxes</li>
+<li>Set minimum stock levels (reorder thresholds)</li>
+<li>Automatically track when items are removed from boxes</li>
+<li>Get alerts when stock levels drop below minimum</li>
+</ul>
+
+<h2>Key Concepts</h2>
+
+<h3>Storage Boxes</h3>
+<p>A <strong>Storage Box</strong> is an asset that has a <code>min<em>stock</em>threshold</code> set. This tells the system to track how many items are inside it.</p>
+
+<h3>Items in Storage</h3>
+<p>Items that are <strong>inside</strong> a storage box have:</p>
+<ul>
+<li><code>container_id</code> = ID of the storage box asset</li>
+<li><code>status</code> = <code>IN_STORAGE</code></li>
+</ul>
+
+<h3>Automatic Lifecycle Management</h3>
+<p>When you connect a cable using the Cable Scanner:</p>
+<ol>
+<li>The cable's status automatically changes from <code>IN_STORAGE</code> → <code>DEPLOYED</code></li>
+<li>The cable's <code>container_id</code> is cleared (removed from the box)</li>
+<li>Stock count is automatically updated</li>
+<li>Low stock alerts are triggered if needed</li>
+</ol>
+
+<h2>Step-by-Step Instructions</h2>
+
+<h3>1. Create a Storage Box</h3>
+
+<ol>
+<li>Navigate to <strong>Inventory</strong> → <strong>Assets</strong></li>
+<li>Click <strong>+ Add Asset</strong></li>
+<li>Fill in the asset details:</li>
+</ol>
+<p>- <strong>Asset Tag</strong>: e.g., "Cat6 Cable Bin" - <strong>Asset Type</strong>: Select an appropriate type (e.g., "Storage Box") - <strong>Manufacturer/Model</strong>: Optional - <strong>Status</strong>: Any status (doesn't matter for the box itself)</p>
+<ol>
+<li><strong>Important</strong>: In the <strong>Minimum Stock Level</strong> field, enter your reorder threshold (e.g., <code>5</code>)</li>
+<li>Click <strong>Save</strong></li>
+</ol>
+
+<p>The asset is now a storage box with stock tracking enabled.</p>
+
+<h3>2. Add Items to a Storage Box</h3>
+
+<ol>
+<li>Navigate to <strong>Inventory</strong> → <strong>Assets</strong></li>
+<li>Click <strong>+ Add Asset</strong> (or edit an existing asset)</li>
+<li>Fill in the item details:</li>
+</ol>
+<p>- <strong>Asset Tag</strong>: e.g., "DAC<em>CABLE-001" - <strong>Serial Number</strong>: e.g., "SN-001" - <strong>Asset Type</strong>: Select the item type (e.g., "DAC</em>CABLE") - <strong>Status</strong>: <strong>Select "IN_STORAGE"</strong> (this is critical!)</p>
+<ol>
+<li>In the <strong>Inside Storage Box (Asset)</strong> dropdown, select your storage box</li>
+<li>Click <strong>Save</strong></li>
+</ol>
+
+<p>The item is now tracked as being inside the storage box.</p>
+
+<h3>3. View Items in a Storage Box</h3>
+
+<p><strong>Method 1: From Asset Detail Page</strong></p>
+<ol>
+<li>Navigate to <strong>Inventory</strong> → <strong>Assets</strong></li>
+<li>Click on the storage box asset</li>
+<li>Scroll to the <strong>Storage Box Contents</strong> section</li>
+<li>You'll see:</li>
+</ol>
+<p>- Minimum stock level - List of all items currently in the box - Links to each item's detail page</p>
+
+<p><strong>Method 2: From Stock Management Page</strong></p>
+<ol>
+<li>Navigate to <strong>Stock Management</strong></li>
+<li>Click the <strong>All Storage Boxes</strong> tab</li>
+<li>Click on any storage box card to view details</li>
+<li>Or use the <strong>Low Stock Alerts</strong> tab to see boxes that need reordering</li>
+</ol>
+
+<h3>4. Find an Item in Storage</h3>
+
+<p><strong>Method 1: Search in Inventory</strong></p>
+<ol>
+<li>Navigate to <strong>Inventory</strong> → <strong>Assets</strong></li>
+<li>Use the search box to search by:</li>
+</ol>
+<p>- Asset Tag (e.g., "DAC_CABLE-1763710369795") - Serial Number - Model - Hostname</p>
+<ol>
+<li>Items with <code>status = IN_STORAGE</code> will appear in the results</li>
+<li>Click on the item to see which storage box it's in (shown in the <strong>Storage Location</strong> section)</li>
+</ol>
+
+<p><strong>Method 2: Filter by Status</strong></p>
+<ol>
+<li>Navigate to <strong>Inventory</strong> → <strong>Assets</strong></li>
+<li>In the <strong>Status</strong> filter dropdown, select <strong>"IN_STORAGE"</strong></li>
+<li>All items currently in storage will be displayed</li>
+</ol>
+
+<p><strong>Method 3: From Storage Box Detail</strong></p>
+<ol>
+<li>Navigate to the storage box's detail page</li>
+<li>View the <strong>Storage Box Contents</strong> section</li>
+<li>All items in that box are listed with links to their detail pages</li>
+</ol>
+
+<h3>5. Set Up Stock Tracking (Minimum Stock Level)</h3>
+
+<ol>
+<li>Navigate to <strong>Inventory</strong> → <strong>Assets</strong></li>
+<li>Find or create the storage box asset</li>
+<li>Click <strong>Edit</strong></li>
+<li>In the <strong>Minimum Stock Level (Reorder Threshold)</strong> field, enter the number (e.g., <code>5</code>)</li>
+<li>Click <strong>Save</strong></li>
+</ol>
+
+<p>The system will now:</p>
+<ul>
+<li>Track how many items are in the box</li>
+<li>Alert you when stock drops below this number</li>
+<li>Show the stock level on the Dashboard and Stock Management page</li>
+</ul>
+
+<h3>6. View Stock Status</h3>
+
+<p><strong>Dashboard</strong></p>
+<ul>
+<li>Navigate to <strong>Dashboard</strong></li>
+<li>Scroll to <strong>Storage Boxes & Stock Levels</strong> section</li>
+<li>See all storage boxes with their current stock levels</li>
+<li>Low stock items are highlighted in red</li>
+</ul>
+
+<p><strong>Stock Management Page</strong></p>
+<ul>
+<li>Navigate to <strong>Stock Management</strong></li>
+<li><strong>Overview Tab</strong>: Summary statistics and quick guide</li>
+<li><strong>All Storage Boxes Tab</strong>: Complete list with stock levels</li>
+<li><strong>Low Stock Alerts Tab</strong>: Only boxes below minimum threshold</li>
+</ul>
+
+<p><strong>Individual Storage Box</strong></p>
+<ul>
+<li>Click on any storage box asset</li>
+<li>View:</li>
+</ul>
+<p>- Current stock count - Minimum threshold - List of items in the box - Stock status (OK or Low Stock)</p>
+
+<h3>7. Clean Up Duplicate Asset Types</h3>
+
+<ol>
+<li>Navigate to <strong>Asset Types</strong> page</li>
+<li>Review the list for duplicates (same name, different cases, etc.)</li>
+<li>Use the API endpoint <code>/api/v1/asset-types/cleanup-duplicates?dry_run=true</code> to see duplicates</li>
+<li>Or manually delete inactive/duplicate types</li>
+</ol>
+
+<h2>Common Workflows</h2>
+
+<h3>Adding a New Shipment of Cables</h3>
+
+<ol>
+<li>Create storage box: "Cat6 Cable Bin" with <code>min<em>stock</em>threshold = 10</code></li>
+<li>For each cable:</li>
+</ol>
+<p>- Create asset with <code>status = IN<em>STORAGE</code> - Set <code>container</em>id</code> to the storage box ID</p>
+<ol>
+<li>Stock count automatically updates</li>
+<li>System tracks: "10 cables in box"</li>
+</ol>
+
+<h3>Using a Cable (Connecting It)</h3>
+
+<ol>
+<li>Use <strong>Cable Scanner</strong> to connect the cable</li>
+<li>System automatically:</li>
+</ol>
+<p>- Changes status: <code>IN<em>STORAGE</code> → <code>DEPLOYED</code> - Removes from box (<code>container</em>id</code> cleared) - Updates stock count: 10 → 9</p>
+<ol>
+<li>If stock drops below 10, you get a low stock alert</li>
+</ol>
+
+<h3>Checking What's in a Box</h3>
+
+<ol>
+<li>Go to <strong>Stock Management</strong> → <strong>All Storage Boxes</strong></li>
+<li>Click on the box</li>
+<li>Or go to <strong>Inventory</strong> → click on the box asset</li>
+<li>View the <strong>Storage Box Contents</strong> section</li>
+</ol>
+
+<h3>Finding a Specific Item</h3>
+
+<ol>
+<li>Go to <strong>Inventory</strong> → <strong>Assets</strong></li>
+<li>Search for the asset tag (e.g., "DAC_CABLE-1763710369795")</li>
+<li>Click on the item</li>
+<li>Check the <strong>Storage Location</strong> section to see which box it's in</li>
+<li>Or filter by status "IN_STORAGE" to see all stored items</li>
+</ol>
+
+<h2>Troubleshooting</h2>
+
+<h3>Item Not Showing in Inventory</h3>
+
+<p><strong>Problem</strong>: Item with <code>status = IN_STORAGE</code> doesn't appear in inventory list.</p>
+
+<p><strong>Solution</strong>:</p>
+<ol>
+<li>Check the <strong>Status</strong> filter - make sure it's not filtering out <code>IN_STORAGE</code></li>
+<li>Clear all filters and search again</li>
+<li>Verify the item's status is actually <code>IN_STORAGE</code> in the database</li>
+<li>Check tenant isolation - make sure you're viewing the correct tenant's assets</li>
+</ol>
+
+<h3>Stock Count Wrong</h3>
+
+<p><strong>Problem</strong>: Stock count doesn't match actual items in box.</p>
+
+<p><strong>Solution</strong>:</p>
+<ol>
+<li>Verify items have <code>container_id</code> set to the box's ID</li>
+<li>Verify items have <code>status = IN_STORAGE</code></li>
+<li>Check the <strong>Storage Box Contents</strong> section on the box's detail page</li>
+<li>Manually count items and compare</li>
+</ol>
+
+<h3>Low Stock Alert Not Showing</h3>
+
+<p><strong>Problem</strong>: Stock is below minimum but no alert.</p>
+
+<p><strong>Solution</strong>:</p>
+<ol>
+<li>Verify <code>min<em>stock</em>threshold</code> is set on the storage box</li>
+<li>Check the <strong>Stock Management</strong> → <strong>Low Stock Alerts</strong> tab</li>
+<li>Verify items are counted correctly (see above)</li>
+</ol>
+
+<h2>Best Practices</h2>
+
+<ol>
+<li><strong>Always set status to IN_STORAGE</strong> when adding items to boxes</li>
+<li><strong>Set realistic minimum stock levels</strong> based on usage patterns</li>
+<li><strong>Use descriptive asset tags</strong> for easy searching</li>
+<li><strong>Regularly review low stock alerts</strong> to avoid running out</li>
+<li><strong>Keep storage boxes organized</strong> - one box per item type when possible</li>
+<li><strong>Use the Cable Scanner</strong> for connections to automatically update stock</li>
+</ol>
+
+<h2>API Endpoints</h2>
+
+<ul>
+<li><code>GET /api/v1/assets/containers/{container_id}/stock</code> - Get stock info</li>
+<li><code>GET /api/v1/assets/containers/{container_id}/items</code> - Get items in box</li>
+<li><code>POST /api/v1/asset-types/cleanup-duplicates</code> - Clean up duplicate asset types</li>
+</ul>
+
+<h2>Notes</h2>
+
+<ul>
+<li>Multiple different item types can be in the same storage box</li>
+<li>Stock tracking only counts items with <code>status = IN_STORAGE</code></li>
+<li>Items are automatically removed from boxes when connected via Cable Scanner</li>
+<li>Low stock alerts appear on Dashboard and Stock Management page</li>
+</ul>
+
+
+            </article>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
