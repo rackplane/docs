@@ -1,109 +1,176 @@
-# Version: 1.0.0
+# RackPlane Documentation
 
-# RackPlane
+## Welcome to RackPlane Documentation
 
-**Multi-Tenant SaaS Platform for Datacenter Hardware and Inventory Management**
+This documentation covers installation, configuration, and usage of RackPlane - a multi-tenant SaaS platform for inventory and asset management across multiple industries including datacenter, healthcare, and warehouse.
 
-## Overview
+---
 
-RackPlane is a comprehensive, real-time management platform for all physical assets within complex, multi-site datacenter environments. Built with modern technologies, it provides complete lifecycle tracking, predictive maintenance, capacity management, and workflow automation.
+## Quick Links
 
-**Key Features:**
-- **Multi-tenant SaaS architecture** - Built for multiple organizations from day one
-- Real-time inventory tracking with barcode/QR code scanning
-- **Stock management** with automatic storage box assignment
-- Location & capacity management (datacenter → room → rack → U-position)
-- **Label printing** with Brother PT-E550W support
-- **Cable scanning and connection tracking**
-- Predictive maintenance and workflow automation
-- Environmental monitoring integration
-- NetBox IPAM/DCIM synchronization
-- Comprehensive reporting and compliance
+| I want to... | Go to... |
+|--------------|----------|
+| Get started quickly | [Getting Started Guide](guides/GETTING_STARTED.md) |
+| Set up a new organization | [Multi-Tenant Onboarding](guides/MULTI_TENANT_ONBOARDING.md) |
+| Learn asset management | [Asset Management Training](training/ASSET_MANAGEMENT.md) |
+| Customize branding | [White-Label Configuration](training/WHITE_LABEL.md) |
+| Manage users and tenants | [Administrator Guide](training/ADMINISTRATOR_GUIDE.md) |
+| Access the API | [API Reference](api/API_REFERENCE.md) |
 
-## Key Features
+---
 
-### 1. Multi-Tenant SaaS Architecture
-- **Shared Database, Shared Schema** - Cost-effective multi-tenancy
-- Complete data isolation between tenants
-- Tenant-scoped queries and access control
-- Super admin capabilities for tenant management
-- Automatic tenant context from JWT tokens
+## Documentation Structure
 
-### 2. Real-Time Inventory Tracking
-- Centralized asset database with complete lifecycle management
-- Support for all hardware types (servers, switches, storage, network equipment, PDUs, cables, etc.)
-- Barcode/QR code scanning integration
-- Photo documentation with mobile upload support
-- Real-time sync with NetBox IPAM/DCIM
-- Custom asset types and fields
+### 📚 Guides
 
-### 3. Stock Management & Storage Boxes
-- **Automatic assignment** - Items automatically assigned to storage boxes on creation
-- **Storage box tracking** - Track inventory levels in storage containers
-- **Low stock alerts** - Automatic notifications when stock drops below threshold
-- **Bulk assignment** - Assign multiple items to storage boxes via API or script
-- **Lifecycle management** - Automatic status changes when items are deployed
-- **Stock summaries** - View items by type, location, and container
+Step-by-step guides for common tasks and setup procedures.
 
-### 4. Location & Capacity Management
-- Precise asset location tracking (datacenter → room → rack → U-position)
-- Real-time capacity monitoring:
-  - **Space**: U-position utilization
-  - **Power**: kW consumption and capacity
-  - **Cooling**: BTU/hr requirements
-- Intelligent placement suggestions based on available resources
-- Visual rack elevation diagrams
-- Storage container location tracking
+| Guide | Description |
+|-------|-------------|
+| [Getting Started](guides/GETTING_STARTED.md) | First login and basic orientation |
+| [Multi-Tenant Onboarding](guides/MULTI_TENANT_ONBOARDING.md) | Complete tenant setup process |
+| [Location Setup](guides/LOCATION_SETUP.md) | Datacenter, room, and rack configuration |
+| [Label Printing](guides/LABEL_PRINTING.md) | Brother PT-E550W printer setup |
 
-### 5. Cable Management
-- **Cable scanning** - Scan and track cable connections
-- **Connection tracking** - Track what's connected to what
-- **Automatic deployment** - Cables automatically removed from storage when deployed
-- **Cable types** - Support for DAC, fiber, ethernet, power cables
-- **Storage organization** - Automatic grouping by cable specifications
+### 🎓 Training Materials
 
-### 6. Label Printing
-- **Brother PT-E550W support** - Optimized for network label printers
-- **QR code labels** - Every label includes scannable QR code
-- **Multiple label sizes** - 12mm, 24mm, 36mm tape support
-- **Asset labels** - Print labels for any asset type
-- **Storage container labels** - Label boxes and bins
-- **Browser-based printing** - Works immediately without drivers
+In-depth training for specific features and workflows.
 
-### 7. Predictive Maintenance *
-- AI-powered failure prediction
-- Historical pattern analysis
-- Proactive maintenance scheduling
-- MTTR (Mean Time To Repair) tracking
-- Parts inventory management
+| Training | Description |
+|----------|-------------|
+| [Asset Management](training/ASSET_MANAGEMENT.md) | Complete asset lifecycle management |
+| [White-Label Configuration](training/WHITE_LABEL.md) | Branding and terminology customization |
+| [Administrator Guide](training/ADMINISTRATOR_GUIDE.md) | Tenant and user management |
+| [Network Ports](training/NETWORK_PORTS.md) | Port management and cable connections |
+| [Reports](training/REPORTS.md) | Generating and exporting reports |
 
-### 8. Workflow Automation *
-- Standard Operating Procedures (SOPs) automation
-- MACs (Moves, Adds, Changes) workflows
-- Deployment workflows
-- Decommissioning workflows
-- Custom workflow creation
+### 🏥 Industry Verticals
 
-### 9. Environmental Monitoring *
-- Temperature and humidity tracking
-- Integration with environmental sensors (SNMP, Modbus, HTTP)
-- Threshold-based alerting
-- Environmental compliance reporting
-- Asset-environment correlation analysis
+Specialized guides for different industry use cases.
 
-### 10. Reporting & Compliance
-- Asset utilization reports
-- Capacity planning reports
-- Power Usage Effectiveness (PUE) analysis *
-- Financial reports (depreciation, inventory value)
-- Audit trails and compliance documentation
-- Export to Excel, CSV, PDF
-- Stock level reports
-- Low stock alerts
+| Vertical | Description |
+|----------|-------------|
+| [Healthcare Vertical](training/HEALTHCARE_VERTICAL.md) | Medical supply management, expiration tracking, lot numbers |
+| [Warehouse Vertical](training/WAREHOUSE_VERTICAL.md) | Bin locations, pick/pack workflows, inventory counts |
 
-### 11. NetBox Integration
-- Automatic device import
-- Rack and site synchronization
-- IP address management integration
+### 🔌 API Reference
 
-\* Road Map or early access features
+Technical documentation for API integration.
+
+| Reference | Description |
+|-----------|-------------|
+| [API Overview](api/API_REFERENCE.md) | Authentication and common patterns |
+| [Assets API](api/ASSETS_API.md) | Asset CRUD operations |
+| [Locations API](api/LOCATIONS_API.md) | Location management |
+| [Users API](api/USERS_API.md) | User management |
+| [Version API](api/VERSION_API.md) | API versioning endpoints |
+
+---
+
+## By Role
+
+### For New Users
+1. [Getting Started](guides/GETTING_STARTED.md) - Orientation and first steps
+2. [Asset Management](training/ASSET_MANAGEMENT.md) - Core functionality
+
+### For Tenant Administrators
+1. [Administrator Guide](training/ADMINISTRATOR_GUIDE.md) - User management
+2. [White-Label Configuration](training/WHITE_LABEL.md) - Customization
+3. [Multi-Tenant Onboarding](guides/MULTI_TENANT_ONBOARDING.md) - Adding organizations
+
+### For Developers
+1. [API Reference](api/API_REFERENCE.md) - REST API documentation
+2. [Integration Guide](../backend/INTEGRATION_GUIDE.md) - Third-party integrations
+3. [Development Setup](../DEV_SETUP.md) - Local development environment
+
+### For Super Administrators
+1. [Administrator Guide](training/ADMINISTRATOR_GUIDE.md) - Platform management
+2. [Multi-Tenant Onboarding](guides/MULTI_TENANT_ONBOARDING.md) - Tenant provisioning
+3. [Security Guide](guides/SECURITY.md) - Security best practices
+
+---
+
+## Feature Documentation
+
+### Core Features
+- **Multi-Tenant Architecture** - Complete tenant isolation
+- **Asset Management** - Full lifecycle tracking
+- **Location Hierarchy** - Datacenter → Room → Rack → U-position
+- **Stock Management** - Spare parts and inventory
+
+### Advanced Features
+- **Network Ports** - Port-to-port cable connections
+- **Label Printing** - QR code asset labels
+- **OCR Scanning** - Label and invoice parsing
+- **NetBox Integration** - Bidirectional sync (Pro+)
+
+### White-Label Features
+- **Branding** - Logo, colors, app name
+- **Terminology** - Industry-specific language
+- **Vertical Packs** - Pre-configured industry settings
+- **Feature Toggles** - Enable/disable capabilities
+
+### Industry Verticals
+- **Datacenter** - Rack management, power efficiency, network ports
+- **Healthcare** - Expiration tracking, lot numbers, FEFO, compliance
+- **Warehouse** - Bin locations, pick/pack, inventory counts
+
+---
+
+## Subscription Tiers
+
+| Feature | Community | Starter | Pro | MSP |
+|---------|-----------|---------|-----|-----|
+| Asset Management | ✅ | ✅ | ✅ | ✅ |
+| Label Printing | ❌ | ✅ | ✅ | ✅ |
+| Cloud OCR | ❌ | 100/mo | 500/mo | ∞ |
+| API Access | ❌ | ❌ | ✅ | ✅ |
+| NetBox Sync | ❌ | ❌ | ✅ | ✅ |
+| Multi-Tenant | ❌ | ❌ | ❌ | ✅ |
+| White-Label | ❌ | ❌ | ❌ | ✅ |
+
+---
+
+## Getting Help
+
+### In-App Help
+- Contextual help icons throughout the application
+- Tooltips on hover
+- Guided tours for new users
+
+### Support Channels
+- **Documentation**: You are here!
+- **Email**: support@rackplane.com
+- **GitHub**: [Issues](https://github.com/rackplane/rackplane/issues) and [Discussions](https://github.com/rackplane/rackplane/discussions)
+
+### API Documentation
+- **Swagger UI**: `/api/docs` on your installation
+- **ReDoc**: `/api/redoc` for alternative view
+
+---
+
+## Version Information
+
+| Component | Version |
+|-----------|---------|
+| API Version | v1.0.0 |
+| Supported Versions | v1 |
+| Documentation Updated | December 2024 |
+
+Check `/api/version` for current API version information.
+
+---
+
+## Contributing to Documentation
+
+We welcome contributions to improve this documentation:
+
+1. Fork the repository
+2. Edit documentation files in `/docs`
+3. Submit a pull request
+
+Please follow:
+- Markdown formatting standards
+- Clear, concise language
+- Include examples where helpful
+- Keep navigation links updated
