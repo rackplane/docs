@@ -9,14 +9,12 @@ repo_url: https://github.com/rackplane/rackplane
 theme:
   name: material
   palette:
-    # Dark mode (default)
     - scheme: slate
       primary: blue
       accent: light blue
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
-    # Light mode
     - scheme: default
       primary: blue
       accent: light blue
@@ -31,7 +29,6 @@ theme:
     - search.suggest
     - search.highlight
     - content.code.copy
-    - content.code.annotate
   icon:
     repo: fontawesome/brands/github
 
@@ -40,6 +37,7 @@ nav:
   - Getting Started:
     - Quick Start: guides/GETTING_STARTED.md
     - Multi-Tenant Onboarding: guides/MULTI_TENANT_ONBOARDING.md
+    - Label Printing: guides/LABEL_PRINTING.md
   - Industry Verticals:
     - Healthcare: training/HEALTHCARE_VERTICAL.md
     - Warehouse: training/WAREHOUSE_VERTICAL.md
@@ -49,6 +47,10 @@ nav:
     - Administrator Guide: training/ADMINISTRATOR_GUIDE.md
   - API Reference:
     - Overview: api/API_REFERENCE.md
+  - Operations:
+    - Deployment: operations/DEPLOYMENT.md
+    - Backup & Recovery: operations/BACKUP_GUIDE.md
+    - NetBox Integration: operations/NETBOX_SETUP.md
 
 markdown_extensions:
   - admonition
