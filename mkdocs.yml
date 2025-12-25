@@ -34,16 +34,12 @@ theme:
     - content.code.annotate
   icon:
     repo: fontawesome/brands/github
-  logo: assets/logo.png
-  favicon: assets/favicon.ico
 
 nav:
-  - Home: README.md
+  - Home: index.md
   - Getting Started:
     - Quick Start: guides/GETTING_STARTED.md
     - Multi-Tenant Onboarding: guides/MULTI_TENANT_ONBOARDING.md
-    - Location Setup: guides/LOCATION_SETUP.md
-    - Label Printing: guides/LABEL_PRINTING.md
   - Industry Verticals:
     - Healthcare: training/HEALTHCARE_VERTICAL.md
     - Warehouse: training/WAREHOUSE_VERTICAL.md
@@ -51,18 +47,8 @@ nav:
     - Asset Management: training/ASSET_MANAGEMENT.md
     - White-Label Configuration: training/WHITE_LABEL.md
     - Administrator Guide: training/ADMINISTRATOR_GUIDE.md
-    - Network Ports: training/NETWORK_PORTS.md
-    - Reports: training/REPORTS.md
   - API Reference:
     - Overview: api/API_REFERENCE.md
-    - Assets API: api/ASSETS_API.md
-    - Locations API: api/LOCATIONS_API.md
-    - Users API: api/USERS_API.md
-    - Version API: api/VERSION_API.md
-  - Operations:
-    - Deployment: operations/DEPLOYMENT.md
-    - Backup & Recovery: operations/BACKUP_GUIDE.md
-    - NetBox Integration: operations/NETBOX_SETUP.md
 
 markdown_extensions:
   - admonition
@@ -80,8 +66,6 @@ markdown_extensions:
 
 plugins:
   - search
-  - minify:
-      minify_html: true
 
 extra:
   social:
@@ -89,8 +73,5 @@ extra:
       link: https://github.com/rackplane
     - icon: fontawesome/solid/globe
       link: https://rackplane.com
-  analytics:
-    provider: google
-    property: G-XXXXXXXXXX  # Replace with your GA ID
 
 copyright: Copyright &copy; 2024 RackPlane
